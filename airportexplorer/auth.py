@@ -51,7 +51,7 @@ def callback():
         user = User.get_by_email(email)
 
     login_user(user)
-    return redirect("/dashboard")
+    return redirect(url_for("panel.dashboard"))
 
 
 @bp.route("/logout")
