@@ -4,6 +4,9 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_session import Session
 from .models import User
+from flask_caching import Cache
+
+cache = Cache(config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': config('REDIS_URL')})
 
 def create_app():
     # create and configure the app
@@ -21,6 +24,7 @@ def create_app():
 
     # Create and initialize the Flask-Session object AFTER `app` has been configured
     Session(app)
+    cache.init_app(app)
 
     # Login Manager
     login_manager = LoginManager()
