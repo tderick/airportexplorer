@@ -41,10 +41,10 @@ if (jQuery("#summary-chart-01").length) {
     curve: 'smooth'
   },
   xaxis: {
-   
+
     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
     labels: {
-       
+
       minWidth: 20,
       maxWidth: 20,
     }
@@ -81,7 +81,7 @@ if (jQuery("#summary-chart-01").length) {
     })
 
   };
-  
+
   if (jQuery("#customer-chart-02").length) {
     var options = {
       series: [{
@@ -101,21 +101,21 @@ if (jQuery("#summary-chart-01").length) {
           horizontal: false,
           columnWidth: '25%',
           borderRadius: 3,
-          
+
         },
       },
       dataLabels: {
         enabled: false
       },
-     
+
       xaxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
         labels: {
-       
+
           minWidth: 20,
           maxWidth: 20,
         }
-      
+
       },
       yaxis: {
         labels: {
@@ -158,14 +158,14 @@ if (jQuery("#summary-chart-01").length) {
   };
 
   if (jQuery('#user-chart-03').length) {
-    
+
     var options = {
       series: [44,55,15],
       chart: {
       height:288,
       type: 'donut',
     },
-   
+
     labels: ["New user"," user", "other"],
     colors: ['#F56692', '#04237D', '#f1ddf2'],
     plotOptions: {
@@ -187,7 +187,7 @@ if (jQuery("#summary-chart-01").length) {
     },
     grid:{
       padding: {
-       
+
         bottom: 0,
     }
     },
@@ -219,12 +219,5 @@ if (jQuery("#summary-chart-01").length) {
     document.addEventListener('ChangeColorMode', function (e) {
       apexChartUpdate(chart, e.detail)
     })
-    
+
   };
-
-
-
-
-
-
-

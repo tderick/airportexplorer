@@ -11,25 +11,25 @@
             )
         });
         $('#success').on('click', function () {
-            Swal.fire({                
+            Swal.fire({
                 icon: 'success',
                 title: 'Your work has been saved',
-                showConfirmButton: false,                
+                showConfirmButton: false,
             })
         });
         $('#info').on('click', function () {
-            Swal.fire({                
+            Swal.fire({
                 icon: 'info',
                 title: 'Good Job!',
-                showConfirmButton: false,                
+                showConfirmButton: false,
             })
         });
         $('#warning').on('click', function () {
-            Swal.fire({                
+            Swal.fire({
                 icon: 'warning',
                 title: 'Changes are not saved',
                 showConfirmButton: false,
-                
+
             })
         });
         $('#danger').on('click', function () {
@@ -37,7 +37,7 @@
                 icon: 'error',
                 title: 'OOps!!',
                 text: 'Something went Wrong',
-                showConfirmButton: false,                
+                showConfirmButton: false,
             })
         });
         $('#confirmation').on('click', function () {
@@ -126,7 +126,7 @@
                     Swal.fire.close();
                 }
             });
-        }); 
+        });
         $('#form-input').on('click', function () {
             Swal.fire("Write something here:", {
                 content: "input",
@@ -134,5 +134,5 @@
             .then((value) => {
                 Swal.fire(`You typed: ${value}`);
             });
-        });      
+        });
     });

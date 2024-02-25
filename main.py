@@ -25,10 +25,11 @@ oauth.register(
 
 @app.route("/")
 def hello_world():
-    # return render_template('dashboard/dashboard-base.html')
-    return render_template("index.html")
+    return render_template('dashboard/dashboard-base.html')
+    # return render_template("index.html")
 
-@app.route('/login')
+
+@app.route("/login")
 def login_page():
     return render_template("auth/login.html")
 

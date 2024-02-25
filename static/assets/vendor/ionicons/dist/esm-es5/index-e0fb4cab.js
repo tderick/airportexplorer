@@ -1022,7 +1022,7 @@ var bootstrapLazy = function (lazyBundles, options) {
             __extends(HostElement, _super);
             // StencilLazyHost
             function HostElement(self) {
-                var _this = 
+                var _this =
                 // @ts-ignore
                 _super.call(this, self) || this;
                 self = _this;

@@ -50,7 +50,7 @@ if (jQuery("#sales-chart-01").length) {
 
   grid: {
 borderColor: '#212321'
-  
+
   },
   xaxis: {
     type: 'datetime',
@@ -70,7 +70,7 @@ borderColor: '#212321'
        dark: true
      })
    }
- 
+
    document.addEventListener('ChangeColorMode', function (e) {
      apexChartUpdate(chart, e.detail)
    })
@@ -110,7 +110,7 @@ borderColor: '#212321'
          text: '',
          align: 'left'
        },
-      
+
        grid: {
          row: {
            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
@@ -120,7 +120,7 @@ borderColor: '#212321'
        xaxis: {
          categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul','Aug','Sep'],
          labels: {
-              
+
               minHeight: 22,
               maxHeight: 22,
           }
@@ -130,13 +130,13 @@ borderColor: '#212321'
              offsetY: 0,
              minWidth: 22,
              maxWidth: 22,
- 
+
              formatter: function(val, index) {
                return '$'+ val ;
              }
- 
- 
- 
+
+
+
            }
         },
         legend: {
@@ -153,7 +153,7 @@ borderColor: '#212321'
          dark: true
        })
      }
-   
+
      document.addEventListener('ChangeColorMode', function (e) {
        apexChartUpdate(chart, e.detail)
      })
@@ -278,11 +278,11 @@ borderColor: '#212321'
         type: 'category',
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul','Aug','Sep','Oct','Nov','Dec'],
         labels: {
-              
+
           minHeight: 20,
           maxHeight: 20,
       }
-        
+
 
       },
 
@@ -293,28 +293,28 @@ borderColor: '#212321'
 
       legend: {
         markers: {
-        
+
           radius: 12
-        
-        
+
+
         },
         position: 'top',
         horizontalAlign: 'left',
         offsetX: -33,
-      
-  
+
+
       },
       fill: {
         opacity: 1
       },
-    
+
 
 
 
 
       dataLabels: {
         enabled: false
-      }    
+      }
 
 
     };
@@ -326,7 +326,7 @@ borderColor: '#212321'
         dark: true
       })
     }
-  
+
     document.addEventListener('ChangeColorMode', function (e) {
       apexChartUpdate(chart, e.detail)
     })
@@ -336,7 +336,7 @@ borderColor: '#212321'
     var options = {
         series: [44,55,15,10],
         chart: {
-        
+
          height:300,
         type: 'donut',
       },
@@ -351,7 +351,7 @@ borderColor: '#212321'
       dataLabels: {
         enabled: false
       },
-      
+
       legend: {
         position: 'top',
       },
@@ -360,7 +360,7 @@ borderColor: '#212321'
           top: 30
       }
       },
-     
+
       responsive: [{
         breakpoint: 480,
         options: {
@@ -405,7 +405,7 @@ if (jQuery("#revenue-chart-06").length) {
       horizontal: true,
       columnWidth: '30%',
       barHeight: '30%',
-      borderRadius: 3     
+      borderRadius: 3
     },
   },
   dataLabels: {
@@ -422,11 +422,11 @@ if (jQuery("#revenue-chart-06").length) {
       minHeight: 20,
       maxHeight: 20,
   }
-  
+
   },
   yaxis: {
     title: {
-     
+
     }
   },
   fill: {
