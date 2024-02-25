@@ -1,6 +1,8 @@
+import redis
 from decouple import config
 from flask import Flask
 from flask_login import LoginManager
+from flask_session import Session
 from .models import User
 
 def create_app():
@@ -9,6 +11,16 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY=config('APP_SECRET_KEY'),
     )
+
+    # SESSION CONFIG
+    # Configure Redis for storing the session data on the server-side
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_USE_SIGNER'] = True
+    app.config['SESSION_REDIS'] = redis.from_url(config('REDIS_URL'))
+
+    # Create and initialize the Flask-Session object AFTER `app` has been configured
+    Session(app)
 
     # Login Manager
     login_manager = LoginManager()
