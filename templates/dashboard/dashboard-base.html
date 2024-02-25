@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block squeleton_wrapper %}
+
+    <!--BEGIN: Start Sidebar -->
+    {% include "dashboard/sidebar.html" %}
+    <!--END: End Sidebar -->
+
+    <!--BEGIN: Start Navbar -->
+    {% include "dashboard/navbar.html" %}
+    <!--BEGIN: Start Navbar -->
+
+    <!--BEGIN: Start Content-->
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                {% block page_content_wrapper %}{% endblock page_content_wrapper %}
+            </div>
+        </div>
+    </div>
+    <!-- END: END Content-->
+
+    <!--BEGIN: Start Footer -->
+    {% include "dashboard/footer.html" %}
+    <!--BEGIN: Start Footer -->
+
+{% endblock squeleton_wrapper %}
+        
+            

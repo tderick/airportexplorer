@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>AirtportExplorer | Your all-in-one message gateway</title>
+        
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{{url_for('static', filename='assets/images/favicon.ico')}}" />
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/css/backend-plugin.min.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/css/backend.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/vendor/remixicon/fonts/remixicon.css')}}">
+        
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/vendor/tui-calendar/tui-calendar/dist/tui-calendar.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/vendor/tui-calendar/tui-date-picker/dist/tui-date-picker.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='assets/vendor/tui-calendar/tui-time-picker/dist/tui-time-picker.css')}}">
+    </head>
+
+    <body class="  ">
+        <!-- loader Start -->
+        <div id="loading">
+            <div id="loading-center">
+            </div>
+        </div>
+        <!-- loader END -->
+
+        <!-- Wrapper Start -->
+        <div class="wrapper"
+            style="background: url({{url_for('static', filename='assets/images/background.png')}}); background-attachment: fixed; background-size: cover; ">
+            
+            {% block squeleton_wrapper %} {% endblock squeleton_wrapper %}
+           
+        </div>
+        <!-- Wrapper End-->
+
+        <!-- Modal list start -->
+
+        <!-- Backend Bundle JavaScript -->
+        <script src="{{url_for('static', filename='assets/js/backend-bundle.min.js')}}"></script>
+        
+        <!-- Table Treeview JavaScript -->
+        <script src="{{url_for('static', filename='assets/js/table-treeview.js')}}"></script>
+        
+        <!-- Chart Custom JavaScript -->
+        <script src="{{url_for('static', filename='assets/js/customizer.js')}}"></script>
+        
+        <!-- Chart Custom JavaScript -->
+        <script async src="{{url_for('static', filename='assets/js/chart-custom.js')}}"></script>
+        <script src="{{url_for('static', filename='assets/js/charts/01.js')}}"></script>
+        <script src="{{url_for('static', filename='assets/js/charts/02.js')}}"></script>
+        <!-- Chart Custom JavaScript -->
+        <script async src="{{url_for('static', filename='assets/js/slider.js')}}"></script>
+        
+        <!-- app JavaScript -->
+        <script src="{{url_for('static', filename='assets/js/app.js')}}"></script>
+    </body>
+
+</html>
