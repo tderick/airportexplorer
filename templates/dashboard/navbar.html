@@ -6,11 +6,11 @@
       >
         <i class="ri-menu-line wrapper-menu"></i>
         <a href="aackend/index.html" class="header-logo">
-          <h4 class="logo-title text-uppercase">GLARE</h4>
+          <h4 class="logo-title text-uppercase">AirportExplorer</h4>
         </a>
       </div>
       <div class="navbar-breadcrumb">
-        <h2 class="ml-2">Welcome back, Mason </h2>
+        <h2 class="ml-2">Welcome back, {{ current_user.first_name }}</h2>
       </div>
       <div class="d-flex align-items-center">
         <button
@@ -71,7 +71,7 @@
                 />
                 <div class="caption ml-3">
                   <h6 class="mb-0 line-height">
-                    Mason Protesters
+                    {{ current_user.last_name }} {{ current_user.first_name }}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-2"
@@ -100,12 +100,13 @@
                         <div
                           class="rounded-circle profile-icon bg-primary mx-auto d-block"
                         >
-                          M
+                          {{ current_user.last_name[0] }}
                         </div>
                         <div class="profile-detail mt-3">
                           <h5>
                             <a href="app/user-profile-edit.html"
-                              >Mason Protesters</a
+                              >{{ current_user.last_name }} {{
+                              current_user.first_name }}</a
                             >
                           </h5>
                           <p>{{current_user.email}}</p>

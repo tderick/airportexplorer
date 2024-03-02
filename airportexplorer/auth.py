@@ -3,10 +3,11 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 from decouple import config
 from flask import (Blueprint, current_app, redirect, render_template, session,
-                   url_for)
-from flask_login import login_user
+                   url_for, request)
+from flask_login import login_user,login_required, current_user
 
 from airportexplorer.models import User
+from airportexplorer.forms import UserOnboardingForm
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -38,8 +39,6 @@ def login_action():
 @bp.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    # import pdb
-    # pdb.set_trace()
     nickname = token["userinfo"]["nickname"]
     email = token["userinfo"]["email"]
     sub = token["userinfo"]["sub"]
@@ -53,8 +52,11 @@ def callback():
         user = User.get_by_email(email)
 
     login_user(user)
-    session["user"] = user
-    return redirect(url_for("panel.dashboard"))
+    if current_user.is_onboarding_complete:
+        return redirect(url_for("panel.dashboard"))
+    
+    return redirect(url_for("auth.onboarding_form"))
+        
 
 
 @bp.route("/logout")
@@ -73,11 +75,25 @@ def logout():
         )
     )
 
-@bp.route("/onboarding/complete", methods=["POST"])
+@bp.route("/onboarding/")
+@login_required
+def onboarding_form():
+    if current_user.is_onboarding_complete:
+        return redirect(url_for("panel.dashboard"))
+    return render_template("auth/onboarding.html")
+
+
+
+@bp.route("/onboarding/complete/", methods=["POST"])
+@login_required
 def complete_onboarding():
-    user = User.get_by_email(session["user_id"])
-    user.onboarding_complete = True
-    user.save()
-    return redirect(url_for("panel.dashboard"))
-
-
+    form = UserOnboardingForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = current_user
+        user.first_name = form.first_name.data 
+        user.last_name = form.last_name.data
+        user.is_onboarding_complete = True
+        user.save()
+        return redirect(url_for("panel.dashboard"))
+    return render_template('auth/onboarding.html')
+    

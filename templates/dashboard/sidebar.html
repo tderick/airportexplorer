@@ -34,18 +34,6 @@
                     </a>
                 </li>
                 
-                <li {% if request.path == url_for('panel.user_list') %}class="active"{% endif %}>
-                    <a href="{{url_for('panel.user_list')}}" >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-                            width="20" height="20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-3">Users</span>
-                
-                    </a> 
-                </li>
-               
                 <li {% if request.path == url_for('panel.airport_list') %}class="active"{% endif %}>
                     <a href="{{url_for('panel.airport_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
@@ -67,8 +55,19 @@
                         </svg>
                         <span class="ml-3">Countries</span>
                     </a>    
+                </li> 
+                
+                <li {% if request.path == url_for('panel.user_list') %}class="active"{% endif %}>
+                    <a href="{{url_for('panel.user_list')}}" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+                            width="20" height="20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="ml-3">Users</span>
+                
+                    </a> 
                 </li>
-            
             </ul>
         </nav>
         
