@@ -34,13 +34,16 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.get_by_email(user_id)
-        
+    
     # Register Blieprints
     from . import auth
     from . import home
     from . import panel
+    from . import errors
+    
     app.register_blueprint(auth.bp)
     app.register_blueprint(home.bp)
     app.register_blueprint(panel.bp)
+    app.register_blueprint(errors.bp)
 
     return app

@@ -75,6 +75,7 @@ class User(UserMixin):
                 "sub": sub,
                 "nickname": nickname,
                 "email_verified": email_verified,
+                "onboaring_complete": False,
             }
             get_database().users.insert_one(document)
             return True

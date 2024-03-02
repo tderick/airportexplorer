@@ -38,6 +38,8 @@ def login_action():
 @bp.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
+    # import pdb
+    # pdb.set_trace()
     nickname = token["userinfo"]["nickname"]
     email = token["userinfo"]["email"]
     sub = token["userinfo"]["sub"]
@@ -51,6 +53,7 @@ def callback():
         user = User.get_by_email(email)
 
     login_user(user)
+    session["user"] = user
     return redirect(url_for("panel.dashboard"))
 
 
@@ -69,3 +72,12 @@ def logout():
             quote_via=quote_plus,
         )
     )
+
+@bp.route("/onboarding/complete", methods=["POST"])
+def complete_onboarding():
+    user = User.get_by_email(session["user_id"])
+    user.onboarding_complete = True
+    user.save()
+    return redirect(url_for("panel.dashboard"))
+
+
