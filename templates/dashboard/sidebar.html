@@ -56,6 +56,18 @@
                         <span class="ml-3">Countries</span>
                     </a>    
                 </li> 
+
+                <li {% if request.path == url_for('panel.region_list') %}class="active"{% endif %}>
+                    <a href="{{url_for('panel.region_list')}}" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+                            width="20" height="20">
+                            <path fill-rule="evenodd"
+                                d="M10 3a7 7 0 00-7 7v7a1 1 0 001 1h12a1 1 0 001-1v-7a7 7 0 00-7-7zm-1 12v-2h2v2H9zm0-4h2v6H9v-6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="ml-3">Regions</span>
+                    </a>    
+                </li> 
                 
                 <li {% if request.path == url_for('panel.user_list') %}class="active"{% endif %}>
                     <a href="{{url_for('panel.user_list')}}" >

@@ -27,15 +27,51 @@ def user_list():
 @login_required
 @cache.cached(timeout=50)
 def airport_list():
-    airports = get_database().airports.find()
-    return render_template("dashboard/airports/airport-list.html", airports=airports)
+    airports = get_database().countries.find({"regions.airports": {"$exists": True}},
+        {
+            "regions.airports.name": 1, 
+            "regions.airports.type": 1, 
+            "regions.airports.iata_code": 1, 
+            "regions.airports.icao_code": 1,
+            "regions.airports.iso_country": 1,
+            "regions.airports.continent": 1,
+            "regions.airports.municipality": 1,
+            
+        }
+    )
+    return render_template("dashboard/airports/airport-list.html", airports=airports[0]['regions'][0]['airports'])
 
 
 @bp.route("/countries-list/")
 @login_required
 def country_list():
-    countries = get_database().countries.find()
+    countries = get_database().countries.find({},
+        {
+            "name": 1, 
+            "code": 1, 
+            "official_name": 1, 
+            "capital": 1,
+            "population": 1,
+            "region": 1,
+            "subregion": 1,
+            "area": 1,
+            
+        }
+    )
     return render_template("dashboard/countries/country-list.html", countries=countries)
+
+@bp.route("/region-list/")
+@login_required
+def region_list():
+    regions = get_database().countries.find({"regions": {"$exists": True}},
+        {
+            "regions.name": 1, 
+            "regions.code": 1, 
+            "regions.iso_country": 1,
+            "regions.continent": 1
+        }
+    )
+    return render_template("dashboard/regions/region-list.html", regions=regions)
 
 @bp.route("/airports/quick-add/", methods=["POST"])
 @login_required
@@ -44,8 +80,14 @@ def quick_airport_add():
         iata_code = request.form.get("iata_code")
         icao_code = request.form.get("icao_code")
         
+        if len(iata_code) > 0:
+            res = requests.get("https://www.airport-data.com/api/ap_info.json?iata={}".format(iata_code.upper()),verify=False)
+            
+            if res.status_code == 200:
+                icao_code = res.json()["icao"]
+        
         if len(icao_code)> 0:
-            rs = requests.get(AIRPORTDB_URL.format(icao_code))
+            rs = requests.get(AIRPORTDB_URL.format(icao_code.upper()))
             
             if rs.status_code == 200:
                 data = rs.json()
@@ -110,7 +152,7 @@ def quick_airport_add():
                             
                         }
                         get_database().countries.insert_one(country_data)
-               
+                        return redirect(url_for("panel.airport_list"))
                 else:
                     # Add the region
                     region_count = get_database().countries.count_documents({"regions.code": region_code})
@@ -165,10 +207,4 @@ def quick_airport_add():
                         
                         get_database().countries.update_one({"code": country_code, "regions.code": region_code}, {"$push": {"regions.$.airports": airport_data}})
                                            
-
-        return redirect(url_for("panel.airport_list"))
-                
-            
-        
-    countries = get_database().countries.find()
-    return render_template("dashboard/countries/country-list.html", countries=countries)
+    return redirect(url_for("panel.airport_list"))

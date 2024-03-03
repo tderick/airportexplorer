@@ -4,7 +4,7 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between">
       <div class="header-title">
-        <h4 class="card-title">Countries List</h4>
+        <h4 class="card-title">Regions List</h4>
       </div>
     </div>
     <div class="card-body">
@@ -42,26 +42,18 @@
           <thead>
             <tr class="ligth">
               <th>NAME</th>
-              <th>OFFICIAL NAME</th>
               <th>CODE</th>
-              <th>CAPITAL</th>
-              <th>POPULATION</th>
-              <th>AREA</th>
-              <th>REGION</th>
-              <th>SUBREGION</th>
+              <th>COUNTRY</th>
+              <th>CONTINENT</th>
             </tr>
           </thead>
           <tbody>
-            {% for country in countries %}
+            {% for region in regions[0]['regions'] %}
             <tr>
-              <td>{{ country.name }}</td>
-              <td>{{ country.official_name }}</td>
-              <td>{{ country.code }}</td>
-              <td>{{ country.capital }}</td>
-              <td>{{ country.population }}</td>
-              <td>{{ country.area }}</td>
-              <td>{{ country.region }}</td>
-              <td>{{ country.subregion }}</td>
+              <td>{{ region.name }}</td>
+              <td>{{ region.code }}</td>
+              <td>{{ region.iso_country }}</td>
+              <td>{{ region.continent }}</td>
             </tr>
             {% endfor %}
           </tbody>

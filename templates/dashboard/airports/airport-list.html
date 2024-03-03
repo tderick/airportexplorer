@@ -84,65 +84,25 @@
         >
           <thead>
             <tr class="ligth">
-              <th>Profile</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Email</th>
-              <th>Country</th>
-              <th>Status</th>
-              <th>Company</th>
-              <th>Join Date</th>
-              <th style="min-width: 100px">Action</th>
+              <th>NAME</th>
+              <th>Type</th>
+              <th>IATA</th>
+              <th>ICAO</th>
+              <th>MUNICIPALITY</th>
+              <th>COUNTRY</th>
+              <th>CONTINENT</th>
             </tr>
           </thead>
           <tbody>
-            {% for user in users %}
+            {% for airport in airports %}
             <tr>
-              <td class="text-center">
-                <img
-                  class="rounded img-fluid avatar-40"
-                  src="../assets/images/user/01.jpg"
-                  alt="profile"
-                />
-              </td>
-              <td>{{ user.first_name }} {{ user.last_name }}</td>
-              <td>{{ user.phone }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.country }}</td>
-              <td><span class="badge bg-primary">Active</span></td>
-              <td>{{ user.company }}</td>
-              <td>{{ user.created_at }}</td>
-              <td>
-                <div class="d-flex align-items-center list-user-action">
-                  <a
-                    class="btn btn-sm bg-primary mr-1"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title=""
-                    data-original-title="Add"
-                    href="#"
-                    ><i class="ri-user-add-line mr-0"></i
-                  ></a>
-                  <a
-                    class="btn btn-sm bg-primary mr-1"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title=""
-                    data-original-title="Edit"
-                    href="#"
-                    ><i class="ri-pencil-line mr-0"></i
-                  ></a>
-                  <a
-                    class="btn btn-sm bg-primary"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title=""
-                    data-original-title="Delete"
-                    href="#"
-                    ><i class="ri-delete-bin-line mr-0"></i
-                  ></a>
-                </div>
-              </td>
+              <td>{{ airport.name }}</td>
+              <td>{{ airport.type }}</td>
+              <td>{{ airport.iata_code }}</td>
+              <td>{{ airport.icao_code }}</td>
+              <td>{{ airport.municipality }}</td>
+              <td>{{ airport.iso_country }}</td>
+              <td>{{ airport.continent }}</td>
             </tr>
             {% endfor %}
           </tbody>
