@@ -5,7 +5,17 @@ from airportexplorer.database import get_database
 
 class User(UserMixin):
 
-    def __init__(self, username=None, email=None, _id=None, nickname=None, is_onboarding_complete=False, first_name=None, last_name=None, object_id=None):
+    def __init__(
+        self,
+        username=None,
+        email=None,
+        _id=None,
+        nickname=None,
+        is_onboarding_complete=False,
+        first_name=None,
+        last_name=None,
+        object_id=None,
+    ):
         self.username = email
         self.email = email
         self._id = _id
@@ -14,8 +24,6 @@ class User(UserMixin):
         self.first_name = first_name
         self.last_name = last_name
         self.object_id = object_id
-        
-        
 
     def is_authenticated(self):
         return True
@@ -123,4 +131,4 @@ class User(UserMixin):
                     "last_name": self.last_name,
                 }
             },
-        )   
+        )

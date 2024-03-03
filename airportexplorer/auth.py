@@ -2,12 +2,12 @@ from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from decouple import config
-from flask import (Blueprint, current_app, redirect, render_template, session,
-                   url_for, request)
-from flask_login import login_user,login_required, current_user
+from flask import (Blueprint, current_app, redirect, render_template, request,
+                   session, url_for)
+from flask_login import current_user, login_required, login_user
 
-from airportexplorer.models import User
 from airportexplorer.forms import UserOnboardingForm
+from airportexplorer.models import User
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -54,9 +54,8 @@ def callback():
     login_user(user)
     if current_user.is_onboarding_complete:
         return redirect(url_for("panel.dashboard"))
-    
+
     return redirect(url_for("auth.onboarding_form"))
-        
 
 
 @bp.route("/logout")
@@ -75,6 +74,7 @@ def logout():
         )
     )
 
+
 @bp.route("/onboarding/")
 @login_required
 def onboarding_form():
@@ -83,17 +83,15 @@ def onboarding_form():
     return render_template("auth/onboarding.html")
 
 
-
 @bp.route("/onboarding/complete/", methods=["POST"])
 @login_required
 def complete_onboarding():
     form = UserOnboardingForm(request.form)
-    if request.method == 'POST' and form.validate():
+    if request.method == "POST" and form.validate():
         user = current_user
-        user.first_name = form.first_name.data 
+        user.first_name = form.first_name.data
         user.last_name = form.last_name.data
         user.is_onboarding_complete = True
         user.save()
         return redirect(url_for("panel.dashboard"))
-    return render_template('auth/onboarding.html')
-    
+    return render_template("auth/onboarding.html")

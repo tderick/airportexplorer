@@ -22,7 +22,7 @@ def get_database():
         + "@airportexplorer.v0ampl7.mongodb.net/?retryWrites=true&w=majority&appName=airportexplorer"
     )
 
-    if 'database' not in g:     
+    if "database" not in g:
         mongoclient = MongoClient(MONGODB_URI, server_api=ServerApi("1"))
         g.database = mongoclient.get_database(MONGO_DATABASE)
 

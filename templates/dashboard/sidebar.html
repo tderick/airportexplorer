@@ -33,7 +33,7 @@
                         <span class="ml-3">Analytics Dashboard</span>
                     </a>
                 </li>
-                
+
                 <li {% if request.path == url_for('panel.airport_list') %}class="active"{% endif %}>
                     <a href="{{url_for('panel.airport_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
@@ -54,8 +54,8 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="ml-3">Countries</span>
-                    </a>    
-                </li> 
+                    </a>
+                </li>
 
                 <li {% if request.path == url_for('panel.region_list') %}class="active"{% endif %}>
                     <a href="{{url_for('panel.region_list')}}" >
@@ -66,9 +66,9 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="ml-3">Regions</span>
-                    </a>    
-                </li> 
-                
+                    </a>
+                </li>
+
                 <li {% if request.path == url_for('panel.user_list') %}class="active"{% endif %}>
                     <a href="{{url_for('panel.user_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
@@ -77,12 +77,12 @@
                                 clip-rule="evenodd" />
                         </svg>
                         <span class="ml-3">Users</span>
-                
-                    </a> 
+
+                    </a>
                 </li>
             </ul>
         </nav>
-        
+
         <div class="pt-5 pb-2"></div>
     </div>
 </div>
