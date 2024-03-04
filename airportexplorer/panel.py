@@ -1,6 +1,6 @@
 import requests
 from decouple import config
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for, jsonify
 from flask_login import login_required
 
 from airportexplorer import cache
@@ -32,21 +32,46 @@ def user_list():
 @login_required
 @cache.cached(timeout=50)
 def airport_list():
-    airports = get_database().countries.find(
-        {"regions.airports": {"$exists": True}},
+    pipeline = [
+        {"$unwind": "$regions"},
+        {"$unwind": "$regions.airports"},
         {
-            "regions.airports.name": 1,
-            "regions.airports.type": 1,
-            "regions.airports.iata_code": 1,
-            "regions.airports.icao_code": 1,
-            "regions.airports.iso_country": 1,
-            "regions.airports.continent": 1,
-            "regions.airports.municipality": 1,
-        },
-    )
+            "$project": {
+                "_id": 0,
+                "ident": "$regions.airports.ident",
+                "name": "$regions.airports.name",
+                "type": "$regions.airports.type",
+                "iata_code": "$regions.airports.iata_code",
+                "icao_code": "$regions.airports.icao_code",
+                "iso_country": "$regions.airports.iso_country",
+                "continent": "$regions.airports.continent",
+                "municipality": "$regions.airports.municipality",
+            }
+        }
+    ]
+
+    airports = get_database().countries.aggregate(pipeline)
+    
+    # # import pdb; pdb.set_trace()
+    
+
+    # airports = get_database().countries.find(
+    #     {"regions.airports": {"$exists": True}},
+    #     {
+    #         "regions.airports.name": 1,
+    #         "regions.airports.type": 1,
+    #         "regions.airports.iata_code": 1,
+    #         "regions.airports.icao_code": 1,
+    #         "regions.airports.iso_country": 1,
+    #         "regions.airports.continent": 1,
+    #         "regions.airports.municipality": 1,
+    #     },
+    # )
+    
+  
     return render_template(
         "dashboard/airports/airport-list.html",
-        airports=airports[0]["regions"][0]["airports"],
+        airports=airports
     )
 
 
@@ -234,3 +259,20 @@ def quick_airport_add():
                         )
 
     return redirect(url_for("panel.airport_list"))
+
+
+@bp.route("/airports/edit/")
+def airport_edit():
+    pass
+
+@bp.route("/airports/delete/", methods=["POST"])
+def airport_delete():
+    if request.form.get("_method") =="delete":
+        airport_id = request.args.get("airport_id")
+        get_database().countries.update_one(
+                            {"regions.airports.ident": airport_id},
+                            {"$pull": {"regions.$[].airports":{"ident":airport_id} }} )
+        
+        return jsonify({"status": "success"}), 200
+    
+    return jsonify({"status": "error"}), 400

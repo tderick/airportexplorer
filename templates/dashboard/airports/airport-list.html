@@ -91,6 +91,7 @@
               <th>MUNICIPALITY</th>
               <th>COUNTRY</th>
               <th>CONTINENT</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
@@ -103,7 +104,43 @@
               <td>{{ airport.municipality }}</td>
               <td>{{ airport.iso_country }}</td>
               <td>{{ airport.continent }}</td>
+              <td>
+                <div class="d-flex align-items-center list-user-action">
+                  <a
+                    class="btn btn-sm bg-primary mr-1"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title=""
+                    data-original-title="Edit"
+                    href="{{ url_for('panel.airport_edit') }}"
+                    ><i class="ri-pencil-line mr-0"></i
+                  ></a>
+                  <form
+                    method="POST"
+                    class="delete-message"
+                    data-route="{{ url_for('panel.airport_delete', airport_id=airport.ident) }}"
+                    data-returnurl="{{ url_for('panel.airport_list') }}"
+                  >
+                    <input
+                      type="hidden"
+                      name="csrf_token"
+                      value="{{ csrf_token() }}"
+                    />
+                    <button
+                      type="submit"
+                      class="btn btn-sm bg-primary"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title=""
+                      data-original-title="Delete"
+                    >
+                      <i class="ri-delete-bin-line mr-0"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
             </tr>
+
             {% endfor %}
           </tbody>
         </table>
