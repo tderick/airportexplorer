@@ -1,0 +1,64 @@
+{% extends 'dashboard/dashboard-base.html' %} {% block page_content_wrapper %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">
+          {% if country %}Update Country{% else %} New Country {% endif %}
+        </h4>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('panel.create_or_edit_country') }}">
+        <div class="form-group">
+          <label for="code">Code:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="code"
+            {% if country %} value="{{ country.code }}" {% endif %}
+          />
+        </div>
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" name="name" {% if country %} value="{{ country.name }}" {% endif %} />
+        </div>
+        <div class="form-group">
+          <label for="official_name">Official Name:</label>
+          <input type="text" class="form-control" name="official_name" {% if country %} value="{{ country.official_name }}" {% endif %} />
+        </div>
+        <div class="form-group"> 
+          <label for="capital">Capital:</label>
+          <input type="text" class="form-control" name="capital" {% if country %} value="{{ country.capital }}" {% endif %} />
+        </div>
+        <div class="form-group">
+          <label for="area">Area:</label>
+          <input type="number" class="form-control" name="area" {% if country %} value="{{ country.area }}" {% endif %} />
+        </div>
+
+        <div class="form-group">
+          <label for="population">Population:</label>
+          <input type="number" class="form-control" name="population" {% if country %} value="{{ country.population }}" {% endif %} />
+        </div>
+
+        <div class="form-group">
+          <label for="region">Region:</label>
+          <input type="text" class="form-control" name="region" {% if country %} value="{{ country.region }}" {% endif %}/>
+        </div>
+
+        <div class="form-group">
+          <label for="subregion">Subregion:</label>
+          <input type="text" class="form-control" name="subregion" {% if country %} value="{{ country.subregion }}" {% endif %} />
+        </div>
+
+        <input type="hidden" {% if country %} value="{{ country._id }}" {% endif %} name="_id"/>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock page_content_wrapper %}

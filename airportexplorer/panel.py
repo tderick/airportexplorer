@@ -2,6 +2,7 @@ import requests
 from decouple import config
 from flask import Blueprint, redirect, render_template, request, url_for, jsonify
 from flask_login import login_required
+from bson.objectid import ObjectId
 
 from airportexplorer import cache
 from airportexplorer.database import get_database
@@ -92,6 +93,54 @@ def country_list():
         },
     )
     return render_template("dashboard/countries/country-list.html", countries=countries)
+
+@bp.route("/countries/country-form/")
+@login_required
+def country_add_form():
+    country_code = request.args.get("code")
+    
+    if country_code is not None:
+        country = get_database().countries.find_one(
+            {"code":country_code},
+            {
+                "name": 1,
+                "code": 1,
+                "official_name": 1,
+                "capital": 1,
+                "population": 1,
+                "region": 1,
+                "subregion": 1,
+                "area": 1,
+                "currencies": 1
+            },
+        )
+        return render_template("dashboard/countries/country-form.html", country=country)
+    else:
+        return render_template("dashboard/countries/country-form.html")
+
+@bp.route("/countries/create-or-edit", methods=['POST'])
+@login_required
+def create_or_edit_country():
+    
+    data = {
+        "code": request.form.get("code"),
+        "name": request.form.get("name"),
+        "official_name": request.form.get("official_name"),
+        "capital": request.form.get("capital"),
+        "area": request.form.get("area"),
+        "population": request.form.get("population"),
+        "region": request.form.get("region"),
+        "subregion": request.form.get("subregion")   
+    }
+    
+    _id = request.form.get("_id")
+    
+    if len(_id) == 0:  
+        get_database().countries.insert_one(data)
+    else:    
+        get_database().countries.update_one({"_id":ObjectId(_id)},{"$set": data})
+        
+    return redirect(url_for("panel.country_list"))
 
 
 @bp.route("/region-list/")
