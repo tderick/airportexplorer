@@ -19,7 +19,7 @@ def get_database():
         + username
         + ":"
         + password
-        + "@airportexplorer.v0ampl7.mongodb.net/?retryWrites=true&w=majority&appName=airportexplorer"
+        + "@airportexplorer.v0ampl7.mongodb.net/?retryWrites=true&w=3&r=1&appName=airportexplorer"
     )
 
     if "database" not in g:

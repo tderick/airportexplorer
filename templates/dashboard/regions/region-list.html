@@ -45,15 +45,51 @@
               <th>CODE</th>
               <th>COUNTRY</th>
               <th>CONTINENT</th>
+              <th>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
-            {% for region in regions[0]['regions'] %}
+            {% for region in regions[0]['regions'] %} {{ region }}
             <tr>
               <td>{{ region.name }}</td>
               <td>{{ region.code }}</td>
               <td>{{ region.iso_country }}</td>
               <td>{{ region.continent }}</td>
+              <td>
+                <div class="d-flex align-items-center list-user-action">
+                  <a
+                    class="btn btn-sm bg-primary mr-1"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title=""
+                    data-original-title="Edit"
+                    href="{{ url_for('panel.airport_edit') }}"
+                    ><i class="ri-pencil-line mr-0"></i
+                  ></a>
+                  <form
+                    method="POST"
+                    class="delete-message"
+                    data-route="{{ url_for('panel.region_delete', code=region.code) }}"
+                    data-returnurl="{{ url_for('panel.region_list') }}"
+                  >
+                    <input
+                      type="hidden"
+                      name="csrf_token"
+                      value="{{ csrf_token() }}"
+                    />
+                    <button
+                      type="submit"
+                      class="btn btn-sm bg-primary"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title=""
+                      data-original-title="Delete"
+                    >
+                      <i class="ri-delete-bin-line mr-0"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
             </tr>
             {% endfor %}
           </tbody>

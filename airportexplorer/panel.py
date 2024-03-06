@@ -116,7 +116,7 @@ def quick_airport_add():
         iata_code = request.form.get("iata_code")
         icao_code = request.form.get("icao_code")
 
-        if len(iata_code) > 0:
+        if iata_code is not None:
             res = requests.get(
                 "https://www.airport-data.com/api/ap_info.json?iata={}".format(
                     iata_code.upper()
@@ -272,6 +272,30 @@ def airport_delete():
         get_database().countries.update_one(
                             {"regions.airports.ident": airport_id},
                             {"$pull": {"regions.$[].airports":{"ident":airport_id} }} )
+        
+        return jsonify({"status": "success"}), 200
+    
+    return jsonify({"status": "error"}), 400
+
+
+
+@bp.route("/regions/delete/", methods=["POST"])
+def region_delete():
+    if request.form.get("_method") =="delete":
+        code = request.args.get("code")
+        get_database().countries.update_one(
+                            {"regions.code": code},
+                            {"$pull": {"regions":{"code":code} }} )
+        
+        return jsonify({"status": "success"}), 200
+    
+    return jsonify({"status": "error"}), 400
+
+@bp.route("/country/delete/", methods=["POST"])
+def country_delete():
+    if request.form.get("_method") =="delete":
+        code = request.args.get("code")
+        get_database().countries.delete_one({"code": code})
         
         return jsonify({"status": "success"}), 200
     
