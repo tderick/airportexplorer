@@ -223,29 +223,30 @@ def create_or_edit_region():
 @bp.route("/airport/airport-form/")
 @login_required
 def airport_add_update_form():
-    # region_code = request.args.get("code")
+    airport_ident = request.args.get("ident")
     
-    # if region_code is not None:
-    #     pipeline = [
-    #         {"$unwind": "$regions"},  # Deconstruct the array
-    #         {"$match": {"regions.code": region_code}},  # Filter based on inner document criteria
-    #         {"$project": {
-    #             "_id": 0, 
-    #             "regions.code": 1, 
-    #             "regions.name": 1, 
-    #             "regions.iso_country": 1, 
-    #             "regions.local_code": 1, 
-    #             "regions.continent": 1
-    #         }}  
-    #     ]
-
-    #     region_cursor = get_database().countries.aggregate(pipeline)
+    if airport_ident is not None:
+        pipeline = [
+            {"$unwind": "$regions"},  # Deconstruct the regions array
+            {"$project": {
+                "filteredValue": {
+                    "$filter": {
+                        "input": "$regions.airports",
+                        "as": "airport",
+                        "cond": {"$eq": ["$$airport.ident", airport_ident]}
+                    }
+                }
+            }}
+        ]
+        airport_cursor = get_database().countries.aggregate(pipeline)
+        airport_raw = list(airport_cursor)[0]
         
-    #     region = list(region_cursor)[0]
+        # import pdb; pdb.set_trace()
+        airport = airport_raw["filteredValue"][0]
         
-    #     return render_template("dashboard/regions/region-form.html", region=region['regions'])
-    # else:
-    return render_template("dashboard/airports/airport-form.html")
+        return render_template("dashboard/airports/airport-form.html", airport=airport)
+    else:
+        return render_template("dashboard/airports/airport-form.html")
     
 
 @bp.route("/airport/create-or-edit", methods=['POST'])
@@ -274,28 +275,20 @@ def create_or_edit_airport():
     country_code = request.form.get("iso_country")
     old_ident = request.form.get("old_ident")
     
-    # import pdb; pdb.set_trace()
-
-
     if len(old_ident) == 0:  
         # New
         get_database().countries.update_one(
                             {"code": country_code, "regions.code": iso_region},
                             {"$push": {"regions.$.airports": airport_data}},
                         )
-
-    # else:    
-    #     get_database().countries.update_one(
-    #                         {"regions.code": old_code}, 
-    #                         {"$set": {
-    #                             "regions.$.code": data["code"],
-    #                             "regions.$.name": data["name"],
-    #                             "regions.$.iso_country": data["iso_country"],
-    #                             "regions.$.local_code": data["local_code"],
-    #                             "regions.$.continent": data["continent"]
-    #                             }
-    #                          }
-    #                     )
+    else:    
+        get_database().countries.update_one(
+            {"regions.airports.ident":old_ident},
+            {"$set": {
+                "regions.$[].airports.$[xxx]": airport_data
+            }},
+            array_filters=[{"xxx.ident": old_ident}]
+        )
     return redirect(url_for("panel.airport_list"))
 
 

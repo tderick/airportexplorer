@@ -86,6 +86,7 @@
         >
           <thead>
             <tr class="ligth">
+              <th>IDENT</th>
               <th>NAME</th>
               <th>Type</th>
               <th>IATA</th>
@@ -99,6 +100,7 @@
           <tbody>
             {% for airport in airports %}
             <tr>
+              <td>{{ airport.ident }}</td>
               <td>{{ airport.name }}</td>
               <td>{{ airport.type }}</td>
               <td>{{ airport.iata_code }}</td>
@@ -114,7 +116,7 @@
                     data-placement="top"
                     title=""
                     data-original-title="Edit"
-                    href="{{ url_for('panel.airport_edit') }}"
+                    href="{{ url_for('panel.airport_add_update_form', ident=airport.ident) }}"
                     ><i class="ri-pencil-line mr-0"></i
                   ></a>
                   <form
