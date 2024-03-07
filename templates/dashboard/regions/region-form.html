@@ -1,0 +1,46 @@
+{% extends 'dashboard/dashboard-base.html' %} {% block page_content_wrapper %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">
+          {% if region %}Update Region{% else %} New Region {% endif %}
+        </h4>
+      </div>
+    </div>
+    {{ region[0] }}
+    <div class="card-body">
+      <form method="post" action="{{ url_for('panel.create_or_edit_region') }}">
+       
+      <div class="form-group">
+          <label for="code">Code:</label>
+          <input type="text" class="form-control" name="code" value="{% if region %}{{ region.code }}{% endif %}">
+      </div>
+      <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" name="name" value="{% if region %}{{ region.name }}{% endif %}">
+      </div>
+      <div class="form-group">
+          <label for="local_code">Local Code:</label>
+          <input type="text" class="form-control" name="local_code" value="{% if region %}{{ region.local_code }}{% endif %}">
+      </div>
+      <div class="form-group">
+          <label for="iso_country">ISO Country:</label>
+          <input type="text" class="form-control" name="iso_country" value="{% if region %}{{ region.iso_country }}{% endif %}">
+      </div>
+      <div class="form-group">
+          <label for="continent">Continent:</label>
+          <input type="text" class="form-control" name="continent" value="{% if region %}{{ region.continent }}{% endif %}">
+      </div>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="old_code" value="{% if region %}{{ region.code }}{% endif %}"/>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock page_content_wrapper %}
