@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  airportexplorer:
+    build: .
+    container_name: airportexplorer
+    restart: unless-stopped
+    expose:
+      - 9000
+  airportexplorer_nginx:
+    build: ./nginx
+    container_name: airportexplorer_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
