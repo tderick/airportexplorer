@@ -1,0 +1,90 @@
+{% extends 'dashboard/dashboard-base.html' %} {% block page_content_wrapper %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">
+          {% if airtport %}Update Airport{% else %} New Airtport {% endif %}
+        </h4>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('panel.create_or_edit_airport')}}">
+        <div class="form-group">
+            <label for="ident">Ident:</label>
+            <input type="text" class="form-control" name="ident" {% if airport %} value="{{ airport.ident }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="type">Type:</label>
+            <select class="form-control" name="type">
+                <option value="large_airport" {% if airport and airport.type == "large_airport" %} selected {% endif %}>Large Airport</option>
+                <option value="medium_airport" {% if airport and airport.type == "medium_airport" %} selected {% endif %}>Medium Airport</option>
+                <option value="small_airport" {% if airport and airport.type == "small_airport" %} selected {% endif %}>Small Airport</option>
+                <option value="heliport" {% if airport and airport.type == "heliport" %} selected {% endif %}>Heliport</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" name="name" {% if airport %} value="{{ airport.name }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="latitude_deg">Latitude (deg):</label>
+            <input type="number" step="any" class="form-control" name="latitude_deg" {% if airport %} value="{{ airport.latitude_deg }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="longitude_deg">Longitude (deg):</label>
+            <input type="number" step="any" class="form-control" name="longitude_deg" {% if airport %} value="{{ airport.longitude_deg }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="elevation_ft">Elevation (ft):</label>
+            <input type="text" class="form-control" name="elevation_ft" {% if airport %} value="{{ airport.elevation_ft }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="continent">Continent:</label>
+            <input type="text" class="form-control" name="continent" {% if airport %} value="{{ airport.continent }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="iso_country">ISO Country:</label>
+            <input type="text" class="form-control" name="iso_country" {% if airport %} value="{{ airport.iso_country }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="iso_region">ISO Region:</label>
+            <input type="text" class="form-control" name="iso_region" {% if airport %} value="{{ airport.iso_region }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="municipality">Municipality:</label>
+            <input type="text" class="form-control" name="municipality" {% if airport %} value="{{ airport.municipality }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="gps_code">GPS Code:</label>
+            <input type="text" class="form-control" name="gps_code" {% if airport %} value="{{ airport.gps_code }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="iata_code">IATA Code:</label>
+            <input type="text" class="form-control" name="iata_code" {% if airport %} value="{{ airport.iata_code }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="local_code">Local Code:</label>
+            <input type="text" class="form-control" name="local_code" {% if airport %} value="{{ airport.local_code }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="home_link">Home Link:</label>
+            <input type="url" class="form-control" name="home_link" {% if airport %} value="{{ airport.home_link }}" {% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="icao_code">ICAO Code:</label>
+            <input type="text" class="form-control" name="icao_code" {% if airport %} value="{{ airport.icao_code }}" {% endif %}>
+        </div>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="old_ident" value="{% if airport %}{{ airport.ident }}{% endif %}"/>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+    </div>
+  </div>
+</div>
+
+{% endblock page_content_wrapper %}

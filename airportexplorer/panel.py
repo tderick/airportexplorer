@@ -202,8 +202,6 @@ def create_or_edit_region():
     
     if len(old_code) == 0:  
         # New
-        get_database().countries.insert_one(data)
-        
         get_database().countries.update_one(
                             {"code": iso_country}, 
                             {"$push": {"regions": data}}
@@ -221,6 +219,84 @@ def create_or_edit_region():
                              }
                         )
     return redirect(url_for("panel.region_list"))
+
+@bp.route("/airport/airport-form/")
+@login_required
+def airport_add_update_form():
+    # region_code = request.args.get("code")
+    
+    # if region_code is not None:
+    #     pipeline = [
+    #         {"$unwind": "$regions"},  # Deconstruct the array
+    #         {"$match": {"regions.code": region_code}},  # Filter based on inner document criteria
+    #         {"$project": {
+    #             "_id": 0, 
+    #             "regions.code": 1, 
+    #             "regions.name": 1, 
+    #             "regions.iso_country": 1, 
+    #             "regions.local_code": 1, 
+    #             "regions.continent": 1
+    #         }}  
+    #     ]
+
+    #     region_cursor = get_database().countries.aggregate(pipeline)
+        
+    #     region = list(region_cursor)[0]
+        
+    #     return render_template("dashboard/regions/region-form.html", region=region['regions'])
+    # else:
+    return render_template("dashboard/airports/airport-form.html")
+    
+
+@bp.route("/airport/create-or-edit", methods=['POST'])
+@login_required
+def create_or_edit_airport():
+    
+    airport_data = {
+        "ident": request.form.get("ident"),
+        "type": request.form.get("type"),
+        "name": request.form.get("name"),
+        "latitude_deg": request.form.get("latitude_deg"),
+        "longitude_deg": request.form.get("longitude_deg"),
+        "elevation_ft": request.form.get("elevation_ft"),
+        "continent": request.form.get("continent"),
+        "iso_country": request.form.get("iso_country"),
+        "iso_region": request.form.get("iso_region"),
+        "municipality": request.form.get("municipality"),
+        "gps_code": request.form.get("gps_code"),
+        "iata_code": request.form.get("iata_code"),
+        "local_code": request.form.get("local_code"),
+        "home_link": request.form.get("home_link"),
+        "icao_code": request.form.get("icao_code"),
+    }
+    
+    iso_region = request.form.get("iso_region")
+    country_code = request.form.get("iso_country")
+    old_ident = request.form.get("old_ident")
+    
+    # import pdb; pdb.set_trace()
+
+
+    if len(old_ident) == 0:  
+        # New
+        get_database().countries.update_one(
+                            {"code": country_code, "regions.code": iso_region},
+                            {"$push": {"regions.$.airports": airport_data}},
+                        )
+
+    # else:    
+    #     get_database().countries.update_one(
+    #                         {"regions.code": old_code}, 
+    #                         {"$set": {
+    #                             "regions.$.code": data["code"],
+    #                             "regions.$.name": data["name"],
+    #                             "regions.$.iso_country": data["iso_country"],
+    #                             "regions.$.local_code": data["local_code"],
+    #                             "regions.$.continent": data["continent"]
+    #                             }
+    #                          }
+    #                     )
+    return redirect(url_for("panel.airport_list"))
 
 
 @bp.route("/airports/quick-add/", methods=["POST"])
