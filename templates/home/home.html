@@ -1,115 +1,25 @@
 {% extends 'base.html' %} {% block squeleton_wrapper %}
-<div
-  class="iq-top-navbar"
-  style="
-    width: 100% !important;
-    min-height: 50px !important;
-    padding: 10px !important;
-  "
->
-  <div class="iq-navbar-custom">
-    <nav class="navbar navbar-expand-lg navbar-light p-0">
-      <div
-        class="iq-navbar-logo d-flex align-items-center justify-content-between"
-      ></div>
-      <div class="navbar-breadcrumb"></div>
-      <div class="d-flex align-items-center">
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto navbar-list align-items-center">
-            {% if current_user.is_authenticated %}
-            <li class="nav-item nav-icon dropdown caption-content">
-              <a
-                href="#"
-                class="search-toggle dropdown-toggle d-flex align-items-center"
-                id="dropdownMenuButton4"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <img
-                  src="{{ url_for('static', filename='assets/images/user/1.jpg')}}"
-                  class="img-fluid rounded"
-                  alt="user"
-                />
-                <div class="caption ml-3">
-                  <h6 class="mb-0 line-height">
-                    {{ current_user.last_name }} {{ current_user.first_name }}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-2"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      height="20px"
-                      width="20px"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </h6>
-                </div>
-              </a>
-              <div
-                class="iq-sub-dropdown dropdown-menu mt-2"
-                aria-labelledby="dropdownMenuButton4"
-              >
-                <div class="card mb-0">
-                  <div class="card-body">
-                    <div class="profile-header">
-                      <div class="cover-container text-center">
-                        <div
-                          class="rounded-circle profile-icon bg-primary mx-auto d-block"
-                        >
-                          {{ current_user.last_name[0] }}
-                        </div>
-                        <div class="profile-detail mt-3">
-                          <h5>
-                            <a href="app/user-profile-edit.html"
-                              >{{ current_user.last_name }} {{
-                              current_user.first_name }}</a
-                            >
-                          </h5>
-                          <p>{{current_user.email}}</p>
-                        </div>
-                        <a
-                          href="{{ url_for('auth.logout') }}"
-                          class="btn btn-primary"
-                          >Sign Out</a
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            {% else %}
-            <a href="{{ url_for('auth.login_action') }}" class="mr-5"
-              >Sign In</a
-            >
-            <a href="{{ url_for('auth.login_action') }}" class="mr-5"
-              >Sign Up</a
-            >
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
-</div>
+
+<!--BEGIN: Start Footer -->
+{% include "home/header.html" %}
+<!--BEGIN: Start Footer -->
+
 <div class="container">
   <div class="row no-gutters height-self-center">
     <div class="col-sm-12 text-center align-self-center">
       <div class="iq-error position-relative">
         <h2 class="mb-0 mt-4">Find Airport by IATA, ICAO or Name</h2>
-        <form class="mr-3 position-relative">
+        <form
+          class="mr-3 position-relative"
+          method="GET"
+          action="{{ url_for('home.airport_result') }}"
+        >
           <div class="form-group mb-0 mt-4">
             <input
               type="search"
               class="form-control"
               name="q"
-              placeholder="Enter the Airport IATA, ICAO Code or Name, "
+              placeholder="Enter the Airport IATA, ICAO Code or Name"
               aria-controls="user-list-table"
               autofocus
             />
