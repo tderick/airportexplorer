@@ -7,6 +7,7 @@
         <h4 class="card-title">Countries List</h4>
       </div>
     </div>
+
     <div class="card-body">
       <div class="table-responsive">
         <div class="row justify-content-between">
@@ -14,20 +15,25 @@
             <div id="user_list_datatable_info" class="dataTables_filter">
               <form class="mr-3 position-relative">
                 <div class="form-group mb-0">
-                  <input
+                  <!-- <input
                     type="search"
                     class="form-control"
                     id="exampleInputSearch"
                     placeholder="Search"
                     aria-controls="user-list-table"
-                  />
+                  /> -->
                 </div>
               </form>
             </div>
           </div>
           <div class="col-sm-6 col-md-6">
             <div class="user-list-files d-flex">
-              <a class="bg-primary" href="{{ url_for('panel.country_add_form') }}"> New Country </a>
+              <a
+                class="bg-primary"
+                href="{{ url_for('panel.country_add_form') }}"
+              >
+                New Country
+              </a>
             </div>
           </div>
         </div>

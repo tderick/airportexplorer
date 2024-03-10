@@ -1,6 +1,6 @@
 import requests
 from decouple import config
-from flask import Blueprint, redirect, render_template, request, url_for, jsonify
+from flask import Blueprint, redirect, render_template, request, url_for, jsonify, flash
 from flask_login import login_required
 from bson.objectid import ObjectId
 
@@ -307,8 +307,11 @@ def quick_airport_add():
                 verify=False,
             )
 
-            if res.status_code == 200:
+            if res.status_code == 200 and "icao" in res.json():
                 icao_code = res.json()["icao"]
+            else:
+                flash("Test")
+                return redirect(url_for("panel.airport_list"), )
 
         if len(icao_code) > 0:
             rs = requests.get(AIRPORTDB_URL.format(icao_code.upper()))

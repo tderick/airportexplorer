@@ -48,6 +48,7 @@
             </tr>
           </thead>
           <tbody>
+            {{ len(regions) }}
             {% for region in regions[0]['regions'] %} 
             <tr>
               <td>{{ region.name }}</td>
