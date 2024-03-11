@@ -41,3 +41,27 @@ def airport_result():
     airports = list(get_database().countries.aggregate(pipeline))
     
     return render_template("home/airport-result.html", query=query, airports=airports)
+
+
+@bp.route("/airport-details/")
+def airport_details():
+    airport_ident = request.args.get("ident")
+    
+    pipeline = [
+        {"$unwind": "$regions"},
+        {"$match": {"regions.airports.ident": airport_ident}},
+        {"$addFields": {
+            "regions.airports": {
+                "$filter": {
+                    "input": "$regions.airports",
+                    "as": "airport",
+                    "cond": {"$eq": ["$$airport.ident", airport_ident]}
+                }
+            }
+        }
+        }
+    ]
+    
+    airport = list(get_database().countries.aggregate(pipeline))
+
+    return render_template("home/airport-details.html", airport=airport[0])

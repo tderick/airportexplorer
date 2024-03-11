@@ -11,3 +11,5 @@ pre-commit run --all-files
 ```
 https://www.digitalocean.com/community/tutorials/how-to-perform-full-text-search-in-mongodb
 ```
+
+Google MAP KEY: AIzaSyA9JDKs4ecxNUJWtB2UvDW-ZfnibLilDjA
