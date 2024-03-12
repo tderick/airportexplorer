@@ -66,46 +66,7 @@ def airport_list():
     
     next_url = url_for('panel.airport_list', pageNumber=pageNumber+1, pageSize=pageSize) 
     prev_url = url_for('panel.airport_list', pageNumber=pageNumber-1, pageSize=pageSize) 
-    # import pdb; pdb.set_trace()
     
-    # import pdb; pdb.set_trace()
-    # pipeline = [
-    #     {"$unwind": "$regions"},
-    #     {"$unwind": "$regions.airports"},
-    #     {
-    #         "$project": {
-    #             "_id": 0,
-    #             "ident": "$regions.airports.ident",
-    #             "name": "$regions.airports.name",
-    #             "type": "$regions.airports.type",
-    #             "iata_code": "$regions.airports.iata_code",
-    #             "icao_code": "$regions.airports.icao_code",
-    #             "iso_country": "$regions.airports.iso_country",
-    #             "continent": "$regions.airports.continent",
-    #             "municipality": "$regions.airports.municipality",
-    #         }
-    #     }
-    # ]
-
-    # airports = get_database().countries.aggregate(pipeline)
-    
-    # # import pdb; pdb.set_trace()
-    
-
-    # airports = get_database().countries.find(
-    #     {"regions.airports": {"$exists": True}},
-    #     {
-    #         "regions.airports.name": 1,
-    #         "regions.airports.type": 1,
-    #         "regions.airports.iata_code": 1,
-    #         "regions.airports.icao_code": 1,
-    #         "regions.airports.iso_country": 1,
-    #         "regions.airports.continent": 1,
-    #         "regions.airports.municipality": 1,
-    #     },
-    # )
-    
-  
     return render_template(
         "dashboard/airports/airport-list.html",
         airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url
@@ -115,20 +76,56 @@ def airport_list():
 @bp.route("/countries-list/")
 @login_required
 def country_list():
-    countries = get_database().countries.find(
-        {},
+    # countries = get_database().countries.find(
+    #     {},
+    #     {
+    #         "name": 1,
+    #         "code": 1,
+    #         "official_name": 1,
+    #         "capital": 1,
+    #         "population": 1,
+    #         "region": 1,
+    #         "subregion": 1,
+    #         "area": 1,
+    #     },
+    # )
+    
+    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
+
+    pipeline = [
         {
-            "name": 1,
-            "code": 1,
-            "official_name": 1,
-            "capital": 1,
-            "population": 1,
-            "region": 1,
-            "subregion": 1,
-            "area": 1,
+            "$project": {
+                "name": 1,
+                "code": 1,
+                "official_name": 1,
+                "capital": 1,
+                "population": 1,
+                "region": 1,
+                "subregion": 1,
+                "area": 1,
+            }
         },
-    )
-    return render_template("dashboard/countries/country-list.html", countries=countries)
+        {
+            "$facet": {
+                "data": [
+                    {"$skip": (pageNumber - 1) * pageSize},
+                    {"$limit": pageSize}
+                ],
+                "metadata": [
+                {"$group": {"_id": None, "count": {"$sum": 1}}},
+                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
+            ],
+            }
+        }
+    ]
+
+    result = list(get_database().countries.aggregate(pipeline))
+
+    next_url = url_for('panel.country_list', pageNumber=pageNumber+1, pageSize=pageSize) 
+    prev_url = url_for('panel.country_list', pageNumber=pageNumber-1, pageSize=pageSize) 
+    
+    return render_template("dashboard/countries/country-list.html", countries=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/countries/country-form/")
 @login_required
