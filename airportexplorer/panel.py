@@ -76,19 +76,6 @@ def airport_list():
 @bp.route("/countries-list/")
 @login_required
 def country_list():
-    # countries = get_database().countries.find(
-    #     {},
-    #     {
-    #         "name": 1,
-    #         "code": 1,
-    #         "official_name": 1,
-    #         "capital": 1,
-    #         "population": 1,
-    #         "region": 1,
-    #         "subregion": 1,
-    #         "area": 1,
-    #     },
-    # )
     
     pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
@@ -179,17 +166,51 @@ def create_or_edit_country():
 @bp.route("/region-list/")
 @login_required
 def region_list():
-    regions = get_database().countries.find(
-        {"regions": {"$exists": True}},
+    # regions = get_database().countries.find(
+    #     {"regions": {"$exists": True}},
+    #     {
+    #         "regions.name": 1,
+    #         "regions.code": 1,
+    #          "regions.local_code": 1,
+    #         "regions.iso_country": 1,
+    #         "regions.continent": 1,
+    #     },
+    # )
+    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
+
+
+    pipeline = [
+        {"$match": {"regions": {"$exists": True}}},
+        {"$unwind": "$regions"},
         {
-            "regions.name": 1,
-            "regions.code": 1,
-             "regions.local_code": 1,
-            "regions.iso_country": 1,
-            "regions.continent": 1,
+            "$project": {
+                "_id": 0,
+                "name": "$regions.name",
+                "code": "$regions.code",
+                "local_code": "$regions.local_code",
+                "iso_country": "$regions.iso_country",
+                "continent": "$regions.continent"
+            }
         },
-    )
-    return render_template("dashboard/regions/region-list.html", regions=regions)
+        {"$facet": {
+            "data": [
+                {"$skip": (pageNumber - 1) * pageSize},
+                {"$limit": pageSize}
+            ],
+            "metadata": [
+                {"$group": {"_id": None, "count": {"$sum": 1}}},
+                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
+            ]
+        }}
+    ]
+
+    result = list(get_database().countries.aggregate(pipeline))
+
+    next_url = url_for('panel.region_list', pageNumber=pageNumber+1, pageSize=pageSize) 
+    prev_url = url_for('panel.region_list', pageNumber=pageNumber-1, pageSize=pageSize) 
+    
+    return render_template("dashboard/regions/region-list.html", regions=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/regions/region-form/")
 @login_required
