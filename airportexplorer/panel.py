@@ -166,16 +166,7 @@ def create_or_edit_country():
 @bp.route("/region-list/")
 @login_required
 def region_list():
-    # regions = get_database().countries.find(
-    #     {"regions": {"$exists": True}},
-    #     {
-    #         "regions.name": 1,
-    #         "regions.code": 1,
-    #          "regions.local_code": 1,
-    #         "regions.iso_country": 1,
-    #         "regions.continent": 1,
-    #     },
-    # )
+    
     pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
 
