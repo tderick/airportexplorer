@@ -16,14 +16,12 @@ bp = Blueprint("panel", __name__, url_prefix="/manage")
 
 @bp.route("/")
 @login_required
-@cache.cached(timeout=50)
 def dashboard():
     return render_template("dashboard/dashboard-base.html")
 
 
 @bp.route("/users-list/")
 @login_required
-@cache.cached(timeout=50)
 def user_list():
     users = get_database().users.find()
     return render_template("dashboard/users/user-list.html", users=users)
@@ -31,8 +29,11 @@ def user_list():
 
 @bp.route("/airports-list/")
 @login_required
-@cache.cached(timeout=50)
 def airport_list():
+    
+    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
+
     pipeline = [
         {"$unwind": "$regions"},
         {"$unwind": "$regions.airports"},
@@ -46,12 +47,47 @@ def airport_list():
                 "icao_code": "$regions.airports.icao_code",
                 "iso_country": "$regions.airports.iso_country",
                 "continent": "$regions.airports.continent",
-                "municipality": "$regions.airports.municipality",
+                "municipality": "$regions.airports.municipality"
             }
-        }
+        },
+        {"$facet": {
+            "metadata": [
+                {"$group": {"_id": None, "count": {"$sum": 1}}},
+                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
+            ],
+            "data": [
+                {"$skip": (pageNumber - 1) * pageSize},
+                {"$limit": pageSize}
+            ]
+        }}
     ]
 
-    airports = get_database().countries.aggregate(pipeline)
+    result = list(get_database().countries.aggregate(pipeline))
+    
+    next_url = url_for('panel.airport_list', pageNumber=pageNumber+1, pageSize=pageSize) 
+    prev_url = url_for('panel.airport_list', pageNumber=pageNumber-1, pageSize=pageSize) 
+    # import pdb; pdb.set_trace()
+    
+    # import pdb; pdb.set_trace()
+    # pipeline = [
+    #     {"$unwind": "$regions"},
+    #     {"$unwind": "$regions.airports"},
+    #     {
+    #         "$project": {
+    #             "_id": 0,
+    #             "ident": "$regions.airports.ident",
+    #             "name": "$regions.airports.name",
+    #             "type": "$regions.airports.type",
+    #             "iata_code": "$regions.airports.iata_code",
+    #             "icao_code": "$regions.airports.icao_code",
+    #             "iso_country": "$regions.airports.iso_country",
+    #             "continent": "$regions.airports.continent",
+    #             "municipality": "$regions.airports.municipality",
+    #         }
+    #     }
+    # ]
+
+    # airports = get_database().countries.aggregate(pipeline)
     
     # # import pdb; pdb.set_trace()
     
@@ -72,7 +108,7 @@ def airport_list():
   
     return render_template(
         "dashboard/airports/airport-list.html",
-        airports=airports
+        airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url
     )
 
 

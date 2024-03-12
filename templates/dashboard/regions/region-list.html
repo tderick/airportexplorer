@@ -27,7 +27,12 @@
           </div>
           <div class="col-sm-6 col-md-6">
             <div class="user-list-files d-flex">
-              <a class="bg-primary" href="{{ url_for('panel.region_add_update_form') }}"> New Region </a>
+              <a
+                class="bg-primary"
+                href="{{ url_for('panel.region_add_update_form') }}"
+              >
+                New Region
+              </a>
             </div>
           </div>
         </div>
@@ -48,8 +53,7 @@
             </tr>
           </thead>
           <tbody>
-            {{ len(regions) }}
-            {% for region in regions[0]['regions'] %} 
+            {% for region in regions[0]['regions'] %}
             <tr>
               <td>{{ region.name }}</td>
               <td>{{ region.code }}</td>

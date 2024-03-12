@@ -15,15 +15,16 @@ def get_database():
     password = quote_plus(MONGO_PASSWORD)
 
     MONGODB_URI = (
-        "mongodb+srv://"
+        "mongodb://"
         + username
         + ":"
         + password
-        + "@airportexplorer.v0ampl7.mongodb.net/?retryWrites=true&w=3&r=1&appName=airportexplorer"
+        + "@172.232.220.157:27017,172.232.217.83:27017,172.232.217.81:27017/airportexplorer?authSource=admin&replicaSet=rs0&retryWrites=true&w=3&r=2"
     )
 
     if "database" not in g:
-        mongoclient = MongoClient(MONGODB_URI, server_api=ServerApi("1"))
+        mongoclient = MongoClient(MONGODB_URI)
         g.database = mongoclient.get_database(MONGO_DATABASE)
 
     return g.database
+                                                                                                                                                                                                                                                                                    
