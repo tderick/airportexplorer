@@ -25,6 +25,7 @@ MarkupSafe==2.1.5
 mypy-extensions==1.0.0
 nodeenv==1.8.0
 packaging==23.2
+pandas==2.2.1
 pathspec==0.12.1
 platformdirs==4.2.0
 pre-commit==3.6.2
@@ -38,4 +39,3 @@ urllib3==2.2.1
 virtualenv==20.25.1
 Werkzeug==3.0.1
 WTForms==3.1.2
-pandas==2.2.1

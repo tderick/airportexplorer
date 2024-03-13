@@ -1,5 +1,6 @@
-import  pandas as pd
 from urllib.parse import quote_plus
+
+import pandas as pd
 import requests
 from decouple import config
 from pymongo.mongo_client import MongoClient
@@ -25,9 +26,9 @@ AIRPORTDB_URL = "https://airportdb.io/api/v1/airport/{}?apiToken=" + config(
 mongoclient = MongoClient(MONGODB_URI)
 database = mongoclient.get_database(MONGO_DATABASE)
 
-data= pd.read_csv("data/airports.csv", usecols=['ident'])
+data = pd.read_csv("data/airports.csv", usecols=["ident"])
 
-for datum in data['ident']:
+for datum in data["ident"]:
     try:
         print(datum)
         rs = requests.get(AIRPORTDB_URL.format(datum))
@@ -38,9 +39,7 @@ for datum in data['ident']:
             country_code = data["iso_country"]
             region_code = data["iso_region"]
 
-            country_count = database.countries.count_documents(
-                {"code": country_code}
-            )
+            country_count = database.countries.count_documents({"code": country_code})
 
             if country_count == 0:
                 # Country Doesn't exist
@@ -153,6 +152,6 @@ for datum in data['ident']:
                         {"code": country_code, "regions.code": region_code},
                         {"$push": {"regions.$.airports": airport_data}},
                     )
-    except Exception :
+    except Exception:
         print("Error")
         continue

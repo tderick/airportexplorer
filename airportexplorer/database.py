@@ -3,7 +3,6 @@ from urllib.parse import quote_plus
 from decouple import config
 from flask import g
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
 
 
 def get_database():
@@ -27,4 +26,3 @@ def get_database():
         g.database = mongoclient.get_database(MONGO_DATABASE)
 
     return g.database
-                                                                                                                                                                                                                                                                                    

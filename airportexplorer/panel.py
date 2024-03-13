@@ -1,8 +1,9 @@
 import requests
-from decouple import config
-from flask import Blueprint, redirect, render_template, request, url_for, jsonify, flash
-from flask_login import login_required
 from bson.objectid import ObjectId
+from decouple import config
+from flask import (Blueprint, flash, jsonify, redirect, render_template,
+                   request, url_for)
+from flask_login import login_required
 
 from airportexplorer import cache
 from airportexplorer.database import get_database
@@ -30,9 +31,11 @@ def user_list():
 @bp.route("/airports-list/")
 @login_required
 def airport_list():
-    
-    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
-    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
+
+    pageNumber = (
+        int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    )
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
     pipeline = [
         {"$unwind": "$regions"},
@@ -47,38 +50,53 @@ def airport_list():
                 "icao_code": "$regions.airports.icao_code",
                 "iso_country": "$regions.airports.iso_country",
                 "continent": "$regions.airports.continent",
-                "municipality": "$regions.airports.municipality"
+                "municipality": "$regions.airports.municipality",
             }
         },
-        {"$facet": {
-            "metadata": [
-                {"$group": {"_id": None, "count": {"$sum": 1}}},
-                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
-            ],
-            "data": [
-                {"$skip": (pageNumber - 1) * pageSize},
-                {"$limit": pageSize}
-            ]
-        }}
+        {
+            "$facet": {
+                "metadata": [
+                    {"$group": {"_id": None, "count": {"$sum": 1}}},
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "count": 1,
+                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                        }
+                    },
+                ],
+                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+            }
+        },
     ]
 
     result = list(get_database().countries.aggregate(pipeline))
-    
-    next_url = url_for('panel.airport_list', pageNumber=pageNumber+1, pageSize=pageSize) 
-    prev_url = url_for('panel.airport_list', pageNumber=pageNumber-1, pageSize=pageSize) 
-    
+
+    next_url = url_for(
+        "panel.airport_list", pageNumber=pageNumber + 1, pageSize=pageSize
+    )
+    prev_url = url_for(
+        "panel.airport_list", pageNumber=pageNumber - 1, pageSize=pageSize
+    )
+
     return render_template(
         "dashboard/airports/airport-list.html",
-        airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url
+        airports=result,
+        pageNumber=pageNumber,
+        pageSize=pageSize,
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
 @bp.route("/countries-list/")
 @login_required
 def country_list():
-    
-    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
-    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
+
+    pageNumber = (
+        int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    )
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
     pipeline = [
         {
@@ -95,33 +113,48 @@ def country_list():
         },
         {
             "$facet": {
-                "data": [
-                    {"$skip": (pageNumber - 1) * pageSize},
-                    {"$limit": pageSize}
-                ],
+                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
                 "metadata": [
-                {"$group": {"_id": None, "count": {"$sum": 1}}},
-                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
-            ],
+                    {"$group": {"_id": None, "count": {"$sum": 1}}},
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "count": 1,
+                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                        }
+                    },
+                ],
             }
-        }
+        },
     ]
 
     result = list(get_database().countries.aggregate(pipeline))
 
-    next_url = url_for('panel.country_list', pageNumber=pageNumber+1, pageSize=pageSize) 
-    prev_url = url_for('panel.country_list', pageNumber=pageNumber-1, pageSize=pageSize) 
-    
-    return render_template("dashboard/countries/country-list.html", countries=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
+    next_url = url_for(
+        "panel.country_list", pageNumber=pageNumber + 1, pageSize=pageSize
+    )
+    prev_url = url_for(
+        "panel.country_list", pageNumber=pageNumber - 1, pageSize=pageSize
+    )
+
+    return render_template(
+        "dashboard/countries/country-list.html",
+        countries=result,
+        pageNumber=pageNumber,
+        pageSize=pageSize,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
+
 
 @bp.route("/countries/country-form/")
 @login_required
 def country_add_form():
     country_code = request.args.get("code")
-    
+
     if country_code is not None:
         country = get_database().countries.find_one(
-            {"code":country_code},
+            {"code": country_code},
             {
                 "name": 1,
                 "code": 1,
@@ -131,17 +164,18 @@ def country_add_form():
                 "region": 1,
                 "subregion": 1,
                 "area": 1,
-                "currencies": 1
+                "currencies": 1,
             },
         )
         return render_template("dashboard/countries/country-form.html", country=country)
     else:
         return render_template("dashboard/countries/country-form.html")
 
-@bp.route("/countries/create-or-edit", methods=['POST'])
+
+@bp.route("/countries/create-or-edit", methods=["POST"])
 @login_required
 def create_or_edit_country():
-    
+
     data = {
         "code": request.form.get("code"),
         "name": request.form.get("name"),
@@ -150,26 +184,27 @@ def create_or_edit_country():
         "area": request.form.get("area"),
         "population": request.form.get("population"),
         "region": request.form.get("region"),
-        "subregion": request.form.get("subregion")   
+        "subregion": request.form.get("subregion"),
     }
-    
+
     _id = request.form.get("_id")
-    
-    if len(_id) == 0:  
+
+    if len(_id) == 0:
         get_database().countries.insert_one(data)
-    else:    
-        get_database().countries.update_one({"_id":ObjectId(_id)},{"$set": data})
-        
+    else:
+        get_database().countries.update_one({"_id": ObjectId(_id)}, {"$set": data})
+
     return redirect(url_for("panel.country_list"))
 
 
 @bp.route("/region-list/")
 @login_required
 def region_list():
-    
-    pageNumber = int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
-    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize")  else 10 
 
+    pageNumber = (
+        int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    )
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
     pipeline = [
         {"$match": {"regions": {"$exists": True}}},
@@ -181,59 +216,83 @@ def region_list():
                 "code": "$regions.code",
                 "local_code": "$regions.local_code",
                 "iso_country": "$regions.iso_country",
-                "continent": "$regions.continent"
+                "continent": "$regions.continent",
             }
         },
-        {"$facet": {
-            "data": [
-                {"$skip": (pageNumber - 1) * pageSize},
-                {"$limit": pageSize}
-            ],
-            "metadata": [
-                {"$group": {"_id": None, "count": {"$sum": 1}}},
-                {"$project": {"_id": 0, "count": 1, "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}}}
-            ]
-        }}
+        {
+            "$facet": {
+                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                "metadata": [
+                    {"$group": {"_id": None, "count": {"$sum": 1}}},
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "count": 1,
+                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                        }
+                    },
+                ],
+            }
+        },
     ]
 
     result = list(get_database().countries.aggregate(pipeline))
 
-    next_url = url_for('panel.region_list', pageNumber=pageNumber+1, pageSize=pageSize) 
-    prev_url = url_for('panel.region_list', pageNumber=pageNumber-1, pageSize=pageSize) 
-    
-    return render_template("dashboard/regions/region-list.html", regions=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
+    next_url = url_for(
+        "panel.region_list", pageNumber=pageNumber + 1, pageSize=pageSize
+    )
+    prev_url = url_for(
+        "panel.region_list", pageNumber=pageNumber - 1, pageSize=pageSize
+    )
+
+    return render_template(
+        "dashboard/regions/region-list.html",
+        regions=result,
+        pageNumber=pageNumber,
+        pageSize=pageSize,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
+
 
 @bp.route("/regions/region-form/")
 @login_required
 def region_add_update_form():
     region_code = request.args.get("code")
-    
+
     if region_code is not None:
         pipeline = [
             {"$unwind": "$regions"},  # Deconstruct the array
-            {"$match": {"regions.code": region_code}},  # Filter based on inner document criteria
-            {"$project": {
-                "_id": 0, 
-                "regions.code": 1, 
-                "regions.name": 1, 
-                "regions.iso_country": 1, 
-                "regions.local_code": 1, 
-                "regions.continent": 1
-            }}  
+            {
+                "$match": {"regions.code": region_code}
+            },  # Filter based on inner document criteria
+            {
+                "$project": {
+                    "_id": 0,
+                    "regions.code": 1,
+                    "regions.name": 1,
+                    "regions.iso_country": 1,
+                    "regions.local_code": 1,
+                    "regions.continent": 1,
+                }
+            },
         ]
 
         region_cursor = get_database().countries.aggregate(pipeline)
-        
+
         region = list(region_cursor)[0]
-        
-        return render_template("dashboard/regions/region-form.html", region=region['regions'])
+
+        return render_template(
+            "dashboard/regions/region-form.html", region=region["regions"]
+        )
     else:
         return render_template("dashboard/regions/region-form.html")
 
-@bp.route("/regions/create-or-edit", methods=['POST'])
+
+@bp.route("/regions/create-or-edit", methods=["POST"])
 @login_required
 def create_or_edit_region():
-    
+
     data = {
         "code": request.form.get("code"),
         "name": request.form.get("name"),
@@ -241,63 +300,66 @@ def create_or_edit_region():
         "local_code": request.form.get("local_code"),
         "continent": request.form.get("continent"),
     }
-    
+
     old_code = request.form.get("old_code")
     iso_country = request.form.get("iso_country")
-    
-    if len(old_code) == 0:  
+
+    if len(old_code) == 0:
         # New
         get_database().countries.update_one(
-                            {"code": iso_country}, 
-                            {"$push": {"regions": data}}
-                        )
-    else:    
+            {"code": iso_country}, {"$push": {"regions": data}}
+        )
+    else:
         get_database().countries.update_one(
-                            {"regions.code": old_code}, 
-                            {"$set": {
-                                "regions.$.code": data["code"],
-                                "regions.$.name": data["name"],
-                                "regions.$.iso_country": data["iso_country"],
-                                "regions.$.local_code": data["local_code"],
-                                "regions.$.continent": data["continent"]
-                                }
-                             }
-                        )
+            {"regions.code": old_code},
+            {
+                "$set": {
+                    "regions.$.code": data["code"],
+                    "regions.$.name": data["name"],
+                    "regions.$.iso_country": data["iso_country"],
+                    "regions.$.local_code": data["local_code"],
+                    "regions.$.continent": data["continent"],
+                }
+            },
+        )
     return redirect(url_for("panel.region_list"))
+
 
 @bp.route("/airport/airport-form/")
 @login_required
 def airport_add_update_form():
     airport_ident = request.args.get("ident")
-    
+
     if airport_ident is not None:
         pipeline = [
             {"$unwind": "$regions"},  # Deconstruct the regions array
-            {"$project": {
-                "filteredValue": {
-                    "$filter": {
-                        "input": "$regions.airports",
-                        "as": "airport",
-                        "cond": {"$eq": ["$$airport.ident", airport_ident]}
+            {
+                "$project": {
+                    "filteredValue": {
+                        "$filter": {
+                            "input": "$regions.airports",
+                            "as": "airport",
+                            "cond": {"$eq": ["$$airport.ident", airport_ident]},
+                        }
                     }
                 }
-            }}
+            },
         ]
         airport_cursor = get_database().countries.aggregate(pipeline)
         airport_raw = list(airport_cursor)[0]
-        
+
         # import pdb; pdb.set_trace()
         airport = airport_raw["filteredValue"][0]
-        
+
         return render_template("dashboard/airports/airport-form.html", airport=airport)
     else:
         return render_template("dashboard/airports/airport-form.html")
-    
 
-@bp.route("/airport/create-or-edit", methods=['POST'])
+
+@bp.route("/airport/create-or-edit", methods=["POST"])
 @login_required
 def create_or_edit_airport():
-    
+
     airport_data = {
         "ident": request.form.get("ident"),
         "type": request.form.get("type"),
@@ -315,24 +377,22 @@ def create_or_edit_airport():
         "home_link": request.form.get("home_link"),
         "icao_code": request.form.get("icao_code"),
     }
-    
+
     iso_region = request.form.get("iso_region")
     country_code = request.form.get("iso_country")
     old_ident = request.form.get("old_ident")
-    
-    if len(old_ident) == 0:  
+
+    if len(old_ident) == 0:
         # New
         get_database().countries.update_one(
-                            {"code": country_code, "regions.code": iso_region},
-                            {"$push": {"regions.$.airports": airport_data}},
-                        )
-    else:    
+            {"code": country_code, "regions.code": iso_region},
+            {"$push": {"regions.$.airports": airport_data}},
+        )
+    else:
         get_database().countries.update_one(
-            {"regions.airports.ident":old_ident},
-            {"$set": {
-                "regions.$[].airports.$[xxx]": airport_data
-            }},
-            array_filters=[{"xxx.ident": old_ident}]
+            {"regions.airports.ident": old_ident},
+            {"$set": {"regions.$[].airports.$[xxx]": airport_data}},
+            array_filters=[{"xxx.ident": old_ident}],
         )
     return redirect(url_for("panel.airport_list"))
 
@@ -356,7 +416,9 @@ def quick_airport_add():
                 icao_code = res.json()["icao"]
             else:
                 flash("Test")
-                return redirect(url_for("panel.airport_list"), )
+                return redirect(
+                    url_for("panel.airport_list"),
+                )
 
         if len(icao_code) > 0:
             rs = requests.get(AIRPORTDB_URL.format(icao_code.upper()))
@@ -496,38 +558,40 @@ def quick_airport_add():
 def airport_edit():
     pass
 
+
 @bp.route("/airports/delete/", methods=["POST"])
 def airport_delete():
-    if request.form.get("_method") =="delete":
+    if request.form.get("_method") == "delete":
         airport_id = request.args.get("airport_id")
         get_database().countries.update_one(
-                            {"regions.airports.ident": airport_id},
-                            {"$pull": {"regions.$[].airports":{"ident":airport_id} }} )
-        
-        return jsonify({"status": "success"}), 200
-    
-    return jsonify({"status": "error"}), 400
+            {"regions.airports.ident": airport_id},
+            {"$pull": {"regions.$[].airports": {"ident": airport_id}}},
+        )
 
+        return jsonify({"status": "success"}), 200
+
+    return jsonify({"status": "error"}), 400
 
 
 @bp.route("/regions/delete/", methods=["POST"])
 def region_delete():
-    if request.form.get("_method") =="delete":
+    if request.form.get("_method") == "delete":
         code = request.args.get("code")
         get_database().countries.update_one(
-                            {"regions.code": code},
-                            {"$pull": {"regions":{"code":code} }} )
-        
+            {"regions.code": code}, {"$pull": {"regions": {"code": code}}}
+        )
+
         return jsonify({"status": "success"}), 200
-    
+
     return jsonify({"status": "error"}), 400
+
 
 @bp.route("/country/delete/", methods=["POST"])
 def country_delete():
-    if request.form.get("_method") =="delete":
+    if request.form.get("_method") == "delete":
         code = request.args.get("code")
         get_database().countries.delete_one({"code": code})
-        
+
         return jsonify({"status": "success"}), 200
-    
+
     return jsonify({"status": "error"}), 400

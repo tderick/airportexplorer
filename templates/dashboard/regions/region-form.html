@@ -11,7 +11,7 @@
     </div>
     <div class="card-body">
       <form method="post" action="{{ url_for('panel.create_or_edit_region') }}">
-       
+
       <div class="form-group">
           <label for="code">Code:</label>
           <input type="text" class="form-control" name="code" value="{% if region %}{{ region.code }}{% endif %}">
