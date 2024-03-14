@@ -276,40 +276,77 @@ def create_or_edit_country():
 @login_required
 def region_list():
 
+    search = request.args.get("q")
+    
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
-    pipeline = [
-        {"$match": {"regions": {"$exists": True}}},
-        {"$unwind": "$regions"},
-        {
-            "$project": {
-                "_id": 0,
-                "name": "$regions.name",
-                "code": "$regions.code",
-                "local_code": "$regions.local_code",
-                "iso_country": "$regions.iso_country",
-                "continent": "$regions.continent",
-            }
-        },
-        {
-            "$facet": {
-                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
-                "metadata": [
-                    {"$group": {"_id": None, "count": {"$sum": 1}}},
-                    {
-                        "$project": {
-                            "_id": 0,
-                            "count": 1,
-                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
-                        }
-                    },
-                ],
-            }
-        },
-    ]
+    if search is not None:
+        pipeline = [
+            {"$unwind": "$regions"},
+            {
+                "$match": {
+                    "regions.name": {"$regex": search, "$options": "i"}
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "name": "$regions.name",
+                    "code": "$regions.code",
+                    "local_code": "$regions.local_code",
+                    "iso_country": "$regions.iso_country",
+                    "continent": "$regions.continent",
+                }
+            },
+            {
+                "$facet": {
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                }
+            },
+        ]
+    else:
+        pipeline = [
+            {"$match": {"regions": {"$exists": True}}},
+            {"$unwind": "$regions"},
+            {
+                "$project": {
+                    "_id": 0,
+                    "name": "$regions.name",
+                    "code": "$regions.code",
+                    "local_code": "$regions.local_code",
+                    "iso_country": "$regions.iso_country",
+                    "continent": "$regions.continent",
+                }
+            },
+            {
+                "$facet": {
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                }
+            },
+        ]
 
     result = list(get_database().countries.aggregate(pipeline))
 
