@@ -93,7 +93,7 @@ def complete_onboarding():
         user.last_name = form.last_name.data
         user.is_onboarding_complete = True
         user.save()
-        
+
         if user.is_admin:
             return redirect(url_for("panel.dashboard"))
         else:

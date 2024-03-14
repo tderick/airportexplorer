@@ -27,29 +27,29 @@ data = pd.read_csv("data/airport_reviews.csv").fillna(0)
 
 for index, row in data.iterrows():
     try:
-    
+
         review = {
             "title": row["title"],
             "author": row["author"],
             "author_country": row["author_country"],
-            "date":  row["date"],
+            "date": row["date"],
             "content": row["content"],
             "experience_airport": row["experience_airport"],
             "date_visit": row["date_visit"],
             "type_traveller": row["type_traveller"],
             "overall_rating": row["overall_rating"],
-            "queuing_rating":  row["queuing_rating"],
+            "queuing_rating": row["queuing_rating"],
             "terminal_cleanliness_rating": row["terminal_cleanliness_rating"],
-            "terminal_seating_rating":  row["terminal_seating_rating"],
+            "terminal_seating_rating": row["terminal_seating_rating"],
             "terminal_signs_rating": row["terminal_signs_rating"],
             "food_beverages_rating": row["food_beverages_rating"],
-            "airport_shopping_rating":  row["airport_shopping_rating"],
+            "airport_shopping_rating": row["airport_shopping_rating"],
             "wifi_connectivity_rating": row["wifi_connectivity_rating"],
             "airport_staff_rating": row["airport_staff_rating"],
             "recommended": True if row["recommended"] == 1 else False,
             "is_public": True,
         }
-        
+
         database.reviews.insert_one(review)
 
     except Exception:

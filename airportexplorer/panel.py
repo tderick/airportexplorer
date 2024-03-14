@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from decouple import config
 from flask import (Blueprint, flash, jsonify, redirect, render_template,
                    request, url_for)
-from flask_login import login_required, current_user
+from flask_login import current_user, login_required
 
 from airportexplorer import cache
 from airportexplorer.database import get_database
@@ -21,23 +21,13 @@ def _check_rights():
     if not current_user.is_admin:
         return redirect(url_for("home.home"))
 
+
 def count_airport_of_different_size():
     pipeline = [
-    {"$unwind": "$regions"},
-    {"$unwind": "$regions.airports"},
-        {
-            "$group": {
-                "_id": "$regions.airports.type",
-                "count": {"$sum": 1}
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                "airportType": "$_id",
-                "count": 1
-            }
-        }
+        {"$unwind": "$regions"},
+        {"$unwind": "$regions.airports"},
+        {"$group": {"_id": "$regions.airports.type", "count": {"$sum": 1}}},
+        {"$project": {"_id": 0, "airportType": "$_id", "count": 1}},
     ]
 
     return list(get_database().countries.aggregate(pipeline))
@@ -54,7 +44,7 @@ def top_7_countries_with_high_number_of_airports():
                 "capital": {"$first": "$capital"},
                 "area": {"$first": "$area"},
                 "population": {"$first": "$population"},
-                "totalAirports": {"$sum": 1}
+                "totalAirports": {"$sum": 1},
             }
         },
         {"$sort": {"totalAirports": -1}},  # Sort by totalAirports in descending order
@@ -66,9 +56,9 @@ def top_7_countries_with_high_number_of_airports():
                 "capital": 1,
                 "totalAirports": 1,
                 "area": 1,
-                "population": 1
+                "population": 1,
             }
-        }
+        },
     ]
 
     return list(get_database().countries.aggregate(pipeline))
@@ -78,22 +68,35 @@ def top_7_countries_with_high_number_of_airports():
 @login_required
 def dashboard():
     nbre_countries = get_database().countries.count_documents({})
-    nbre_regions = list(get_database().countries.aggregate([{"$unwind": "$regions"}, {"$count": "count"}]))
-    nbre_airports = list(get_database().countries.aggregate([{"$unwind": "$regions"}, {"$unwind": "$regions.airports"}, {"$count": "count"}]))
-        
+    nbre_regions = list(
+        get_database().countries.aggregate(
+            [{"$unwind": "$regions"}, {"$count": "count"}]
+        )
+    )
+    nbre_airports = list(
+        get_database().countries.aggregate(
+            [
+                {"$unwind": "$regions"},
+                {"$unwind": "$regions.airports"},
+                {"$count": "count"},
+            ]
+        )
+    )
+
     # Aiport of different types
     airport_of_different_size = count_airport_of_different_size()
-    
+
     # Top 7 airport with the high number of aiport
     high_number_of_airports = top_7_countries_with_high_number_of_airports()
-   
-        
-    return render_template("dashboard/dashboard.html", 
-                           nbre_countries=nbre_countries, 
-                           nbre_regions=nbre_regions, 
-                           nbre_airports=nbre_airports, 
-                           airport_of_different_size=airport_of_different_size, 
-                           high_number_of_airports=high_number_of_airports)
+
+    return render_template(
+        "dashboard/dashboard.html",
+        nbre_countries=nbre_countries,
+        nbre_regions=nbre_regions,
+        nbre_airports=nbre_airports,
+        airport_of_different_size=airport_of_different_size,
+        high_number_of_airports=high_number_of_airports,
+    )
 
 
 @bp.route("/users-list/")
@@ -108,7 +111,7 @@ def user_list():
 def airport_list():
 
     search = request.args.get("q")
-    
+
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
@@ -124,11 +127,36 @@ def airport_list():
                         {"regions.airports.ident": {"$regex": search, "$options": "i"}},
                         {"regions.airports.name": {"$regex": search, "$options": "i"}},
                         {"regions.airports.type": {"$regex": search, "$options": "i"}},
-                        {"regions.airports.iata_code": {"$regex": search, "$options": "i"}},
-                        {"regions.airports.icao_code": {"$regex": search, "$options": "i"}},
-                        {"regions.airports.iso_country": {"$regex": search, "$options": "i"}},
-                        {"regions.airports.continent": {"$regex": search, "$options": "i"}},
-                        {"regions.airports.municipality": {"$regex": search, "$options": "i"}},
+                        {
+                            "regions.airports.iata_code": {
+                                "$regex": search,
+                                "$options": "i",
+                            }
+                        },
+                        {
+                            "regions.airports.icao_code": {
+                                "$regex": search,
+                                "$options": "i",
+                            }
+                        },
+                        {
+                            "regions.airports.iso_country": {
+                                "$regex": search,
+                                "$options": "i",
+                            }
+                        },
+                        {
+                            "regions.airports.continent": {
+                                "$regex": search,
+                                "$options": "i",
+                            }
+                        },
+                        {
+                            "regions.airports.municipality": {
+                                "$regex": search,
+                                "$options": "i",
+                            }
+                        },
                     ]
                 }
             },
@@ -153,15 +181,20 @@ def airport_list():
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                 }
             },
         ]
-    
+
     else:
         pipeline = [
             {"$unwind": "$regions"},
@@ -187,11 +220,16 @@ def airport_list():
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                 }
             },
         ]
@@ -220,7 +258,7 @@ def airport_list():
 def country_list():
 
     search = request.args.get("q")
-    
+
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
@@ -254,14 +292,19 @@ def country_list():
             },
             {
                 "$facet": {
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                     "metadata": [
                         {"$group": {"_id": None, "count": {"$sum": 1}}},
                         {
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
@@ -269,7 +312,7 @@ def country_list():
             },
         ]
     else:
-    
+
         pipeline = [
             {
                 "$project": {
@@ -285,14 +328,19 @@ def country_list():
             },
             {
                 "$facet": {
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                     "metadata": [
                         {"$group": {"_id": None, "count": {"$sum": 1}}},
                         {
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
@@ -374,7 +422,7 @@ def create_or_edit_country():
 def region_list():
 
     search = request.args.get("q")
-    
+
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
@@ -383,11 +431,7 @@ def region_list():
     if search is not None:
         pipeline = [
             {"$unwind": "$regions"},
-            {
-                "$match": {
-                    "regions.name": {"$regex": search, "$options": "i"}
-                }
-            },
+            {"$match": {"regions.name": {"$regex": search, "$options": "i"}}},
             {
                 "$project": {
                     "_id": 0,
@@ -400,14 +444,19 @@ def region_list():
             },
             {
                 "$facet": {
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                     "metadata": [
                         {"$group": {"_id": None, "count": {"$sum": 1}}},
                         {
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
@@ -430,14 +479,19 @@ def region_list():
             },
             {
                 "$facet": {
-                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "data": [
+                        {"$skip": (pageNumber - 1) * pageSize},
+                        {"$limit": pageSize},
+                    ],
                     "metadata": [
                         {"$group": {"_id": None, "count": {"$sum": 1}}},
                         {
                             "$project": {
                                 "_id": 0,
                                 "count": 1,
-                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                                "totalPages": {
+                                    "$ceil": {"$divide": ["$count", pageSize]}
+                                },
                             }
                         },
                     ],
@@ -557,7 +611,6 @@ def airport_add_update_form():
         airport_cursor = get_database().countries.aggregate(pipeline)
         airport_raw = list(airport_cursor)[0]
 
-        # import pdb; pdb.set_trace()
         airport = airport_raw["filteredValue"][0]
 
         return render_template("dashboard/airports/airport-form.html", airport=airport)

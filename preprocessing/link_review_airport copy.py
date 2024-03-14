@@ -25,14 +25,14 @@ database = mongoclient.get_database(MONGO_DATABASE)
 
 reviews = database.reviews.find()
 for review in reviews:
-    
+
     try:
-        name =review['title'].replace("Airport customer review", "")
-        
+        name = review["title"].replace("Airport customer review", "")
+
         # Update operation
         update_result = database.countries.update_many(
-            {"regions.airports.name": {"$regex": name, "$options": 'i'}},
-            {"$push": {"regions.$[].airports.$[].reviews": review['_id']}}
+            {"regions.airports.name": {"$regex": name, "$options": "i"}},
+            {"$push": {"regions.$[].airports.$[].reviews": review["_id"]}},
         )
         # update_result = database.countries.update_many(
         #     {"regions.airports.name": {"$regex": name, "$options": 'i'}},
