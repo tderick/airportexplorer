@@ -107,43 +107,94 @@ def user_list():
 @login_required
 def airport_list():
 
+    search = request.args.get("q")
+    
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
-    pipeline = [
-        {"$unwind": "$regions"},
-        {"$unwind": "$regions.airports"},
-        {
-            "$project": {
-                "_id": 0,
-                "ident": "$regions.airports.ident",
-                "name": "$regions.airports.name",
-                "type": "$regions.airports.type",
-                "iata_code": "$regions.airports.iata_code",
-                "icao_code": "$regions.airports.icao_code",
-                "iso_country": "$regions.airports.iso_country",
-                "continent": "$regions.airports.continent",
-                "municipality": "$regions.airports.municipality",
-            }
-        },
-        {
-            "$facet": {
-                "metadata": [
-                    {"$group": {"_id": None, "count": {"$sum": 1}}},
-                    {
-                        "$project": {
-                            "_id": 0,
-                            "count": 1,
-                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
-                        }
-                    },
-                ],
-                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
-            }
-        },
-    ]
+    if search is not None:
+        pipeline = [
+            {"$unwind": "$regions"},
+            {"$unwind": "$regions.airports"},
+            {
+                "$match": {
+                    "$or": [
+                        {"regions.airports.ident": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.name": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.type": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.iata_code": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.icao_code": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.iso_country": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.continent": {"$regex": search, "$options": "i"}},
+                        {"regions.airports.municipality": {"$regex": search, "$options": "i"}},
+                    ]
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "ident": "$regions.airports.ident",
+                    "name": "$regions.airports.name",
+                    "type": "$regions.airports.type",
+                    "iata_code": "$regions.airports.iata_code",
+                    "icao_code": "$regions.airports.icao_code",
+                    "iso_country": "$regions.airports.iso_country",
+                    "continent": "$regions.airports.continent",
+                    "municipality": "$regions.airports.municipality",
+                }
+            },
+            {
+                "$facet": {
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                }
+            },
+        ]
+    
+    else:
+        pipeline = [
+            {"$unwind": "$regions"},
+            {"$unwind": "$regions.airports"},
+            {
+                "$project": {
+                    "_id": 0,
+                    "ident": "$regions.airports.ident",
+                    "name": "$regions.airports.name",
+                    "type": "$regions.airports.type",
+                    "iata_code": "$regions.airports.iata_code",
+                    "icao_code": "$regions.airports.icao_code",
+                    "iso_country": "$regions.airports.iso_country",
+                    "continent": "$regions.airports.continent",
+                    "municipality": "$regions.airports.municipality",
+                }
+            },
+            {
+                "$facet": {
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                }
+            },
+        ]
 
     result = list(get_database().countries.aggregate(pipeline))
 
