@@ -44,14 +44,37 @@
             <label for="continent">Continent:</label>
             <input type="text" class="form-control" name="continent" {% if airport %} value="{{ airport.continent }}" {% endif %}>
         </div>
+    
         <div class="form-group">
-            <label for="iso_country">ISO Country:</label>
-            <input type="text" class="form-control" name="iso_country" {% if airport %} value="{{ airport.iso_country }}" {% endif %}>
+            <label for="iso_country">Country:</label>
+  
+            <select class="custom-select" id="inputGroupSelect04">
+              <option selected="">Choose...</option>
+              {% for country in countries %}
+              {% if airport %}
+              <option value="{{ country.code }}" {% if country.code == airport.iso_country %} selected {% endif %}>{{ country.name }}</option>
+              {% else %}
+              <option value="{{ country.code }}">{{ country.name }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
         </div>
+
         <div class="form-group">
-            <label for="iso_region">ISO Region:</label>
-            <input type="text" class="form-control" name="iso_region" {% if airport %} value="{{ airport.iso_region }}" {% endif %}>
+            <label for="iso_country">Region:</label>
+  
+            <select class="custom-select" id="inputGroupSelect04">
+              <option selected="">Choose...</option>
+              {% for region in regions %}
+              {% if airport %}
+              <option value="{{ region.region_code }}" {% if region.region_code == airport.iso_region %} selected {% endif %}>{{ region.region_name }}</option>
+              {% else %}
+              <option value="{{ region.region_code }}">{{ region.region_name }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
         </div>
+
         <div class="form-group">
             <label for="municipality">Municipality:</label>
             <input type="text" class="form-control" name="municipality" {% if airport %} value="{{ airport.municipality }}" {% endif %}>

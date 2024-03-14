@@ -11,30 +11,63 @@
     </div>
     <div class="card-body">
       <form method="post" action="{{ url_for('panel.create_or_edit_region') }}">
-
-      <div class="form-group">
+        <div class="form-group">
           <label for="code">Code:</label>
-          <input type="text" class="form-control" name="code" value="{% if region %}{{ region.code }}{% endif %}">
-      </div>
-      <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            name="code"
+            value="{% if region %}{{ region.code }}{% endif %}"
+          />
+        </div>
+        <div class="form-group">
           <label for="name">Name:</label>
-          <input type="text" class="form-control" name="name" value="{% if region %}{{ region.name }}{% endif %}">
-      </div>
-      <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            value="{% if region %}{{ region.name }}{% endif %}"
+          />
+        </div>
+        <div class="form-group">
           <label for="local_code">Local Code:</label>
-          <input type="text" class="form-control" name="local_code" value="{% if region %}{{ region.local_code }}{% endif %}">
-      </div>
-      <div class="form-group">
-          <label for="iso_country">ISO Country:</label>
-          <input type="text" class="form-control" name="iso_country" value="{% if region %}{{ region.iso_country }}{% endif %}">
-      </div>
-      <div class="form-group">
-          <label for="continent">Continent:</label>
-          <input type="text" class="form-control" name="continent" value="{% if region %}{{ region.continent }}{% endif %}">
-      </div>
+          <input
+            type="text"
+            class="form-control"
+            name="local_code"
+            value="{% if region %}{{ region.local_code }}{% endif %}"
+          />
+        </div>
+        <div class="form-group">
+          <label for="iso_country">Country:</label>
 
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <input type="hidden" name="old_code" value="{% if region %}{{ region.code }}{% endif %}"/>
+          <select class="custom-select" id="inputGroupSelect04">
+            <option selected="">Choose...</option>
+            {% for country in countries %}
+            {% if region %}
+            <option value="{{ country.code }}" {% if country.code == region.iso_country %} selected {% endif %}>{{ country.name }}</option>
+            {% else %}
+            <option value="{{ country.code }}">{{ country.name }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="continent">Continent:</label>
+          <input
+            type="text"
+            class="form-control"
+            name="continent"
+            value="{% if region %}{{ region.continent }}{% endif %}"
+          />
+        </div>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input
+          type="hidden"
+          name="old_code"
+          value="{% if region %}{{ region.code }}{% endif %}"
+        />
 
         <button type="submit" class="btn btn-primary">Save</button>
       </form>

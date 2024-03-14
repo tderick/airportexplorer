@@ -523,6 +523,8 @@ def region_list():
 def region_add_update_form():
     region_code = request.args.get("code")
 
+    countries = get_database().countries.find({}, {"_id": 0, "name": 1, "code": 1})
+    
     if region_code is not None:
         pipeline = [
             {"$unwind": "$regions"},  # Deconstruct the array
@@ -546,10 +548,10 @@ def region_add_update_form():
         region = list(region_cursor)[0]
 
         return render_template(
-            "dashboard/regions/region-form.html", region=region["regions"]
+            "dashboard/regions/region-form.html", region=region["regions"], countries=countries
         )
     else:
-        return render_template("dashboard/regions/region-form.html")
+        return render_template("dashboard/regions/region-form.html", countries=countries)
 
 
 @bp.route("/regions/create-or-edit", methods=["POST"])
@@ -588,11 +590,21 @@ def create_or_edit_region():
     return redirect(url_for("panel.region_list"))
 
 
+def get_all_regions():
+    pipeline = [
+        {"$unwind": "$regions"},
+        {"$project": {"_id": 0, "region_name": "$regions.name", "region_code": "$regions.code"}}
+    ]
+    return list( get_database().countries.aggregate(pipeline))
+
 @bp.route("/airport/airport-form/")
 @login_required
 def airport_add_update_form():
     airport_ident = request.args.get("ident")
 
+    countries = get_database().countries.find({}, {"_id": 0, "name": 1, "code": 1})
+    regions = get_all_regions()
+    
     if airport_ident is not None:
         pipeline = [
             {"$unwind": "$regions"},  # Deconstruct the regions array
@@ -613,9 +625,9 @@ def airport_add_update_form():
 
         airport = airport_raw["filteredValue"][0]
 
-        return render_template("dashboard/airports/airport-form.html", airport=airport)
+        return render_template("dashboard/airports/airport-form.html", airport=airport, countries=countries, regions=regions)
     else:
-        return render_template("dashboard/airports/airport-form.html")
+        return render_template("dashboard/airports/airport-form.html", countries=countries, regions=regions)
 
 
 @bp.route("/airport/create-or-edit", methods=["POST"])
