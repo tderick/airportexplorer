@@ -12,25 +12,14 @@
     <div class="data-scrollbar" data-scroll="1">
         <nav class="iq-sidebar-menu">
             <ul id="iq-sidebar-toggle" class="iq-menu">
-                <li class="">
-                    <a href="aackend/index.html" class="svg-icon">
+                <li {% if request.path == url_for('panel.dashboard') %}class="active"{% endif %}>
+                    <a href="{{url_for('panel.dashboard')}}" class="svg-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
                             width="20" height="20">
                             <path
                                 d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                         </svg>
-                        <span class="ml-3">Sales Dashboard</span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="aackend/analytics.html" class="svg-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-                            width="20" height="20">
-                            <path fill-rule="evenodd"
-                                d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-3">Analytics Dashboard</span>
+                        <span class="ml-3">Dashboard</span>
                     </a>
                 </li>
 

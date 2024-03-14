@@ -1,0 +1,101 @@
+{% extends 'dashboard/dashboard-base.html' %} {% block page_content_wrapper %}
+
+<div class="col-lg-4 col-md-4">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-body">
+      <div class="rounded m-auto align-items-center">
+        <p>Total Counties</p>
+        <h2>{{nbre_countries}}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-4 col-md-4">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-body">
+      <div class="rounded m-auto align-items-center">
+        <p>Total Regions</p>
+        <h2>{{nbre_regions[0]['count']}}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-4 col-md-4">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-body">
+      <div class="rounded m-auto align-items-center">
+        <p>Total Airports</p>
+        <h2>{{nbre_airports[0]['count']}}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-4 col-md-4 col-xl-4">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">Number of airports of different size</h4>
+      </div>
+    </div>
+    <div class="card-body rec-pat p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 table-borderless">
+          <thead class="">
+            <tr>
+              <th>Type</th>
+              <th>Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for airport in airport_of_different_size %}
+            <tr>
+              <td>{{airport.airportType}}</td>
+              <td>{{airport.count}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-8 col-md-8 col-xl-8">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">
+          Top 7 Countries with the High Number of Airports
+        </h4>
+      </div>
+    </div>
+    <div class="card-body rec-pat p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 table-borderless">
+          <thead class="">
+            <tr>
+              <th>Country</th>
+              <th>Capital</th>
+              <th>Area(KM<sup>2</sup>)</th>
+              <th>Population</th>
+              <th>Airports</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for airport in high_number_of_airports %}
+            <tr>
+              <td>{{airport.country_name}}</td>
+              <td>{{airport.capital}}</td>
+              <td>{{airport.area}}</td>
+              <td>{{airport.population}}</td>
+              <td>{{airport.totalAirports}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock page_content_wrapper %}

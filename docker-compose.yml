@@ -14,7 +14,7 @@ services:
     environment:
       VIRTUAL_HOST: airportexplorer.temfack.com
       LETSENCRYPT_HOST: airportexplorer.temfack.com
-      LETSENCRYPT_EMAIL: dericktemfack@gmail.com
+      LETSENCRYPT_EMAIL: hello@temfack.com
 
 
 #Use this configuration in production with nginx-proxy container

@@ -11,3 +11,8 @@ pre-commit run --all-files
 ```
 https://www.digitalocean.com/community/tutorials/how-to-perform-full-text-search-in-mongodb
 ```
+
+## sss
+```
+https://pypi.org/project/auth0-python/
+```

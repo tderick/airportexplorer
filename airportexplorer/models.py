@@ -15,6 +15,7 @@ class User(UserMixin):
         first_name=None,
         last_name=None,
         object_id=None,
+        is_admin=False,
     ):
         self.username = email
         self.email = email
@@ -24,6 +25,7 @@ class User(UserMixin):
         self.first_name = first_name
         self.last_name = last_name
         self.object_id = object_id
+        self.is_admin = is_admin
 
     def is_authenticated(self):
         return True
@@ -50,6 +52,7 @@ class User(UserMixin):
                 first_name=result["first_name"],
                 last_name=result["last_name"],
                 object_id=result["_id"],
+                is_admin=result["is_admin"],
             )
         else:
             return None
@@ -67,6 +70,7 @@ class User(UserMixin):
                 first_name=result["first_name"],
                 last_name=result["last_name"],
                 object_id=result["_id"],
+                is_admin=result["is_admin"],
             )
         else:
             return None
@@ -84,6 +88,7 @@ class User(UserMixin):
                 first_name=result["first_name"],
                 last_name=result["last_name"],
                 object_id=result["_id"],
+                is_admin=result["is_admin"],
             )
         else:
             return None
@@ -102,6 +107,7 @@ class User(UserMixin):
                 "nickname": nickname,
                 "email_verified": email_verified,
                 "is_onboarding_complete": False,
+                "is_admin": False,
                 "first_name": "",
                 "last_name": "",
             }
