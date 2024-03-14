@@ -168,40 +168,86 @@ def airport_list():
 @login_required
 def country_list():
 
+    search = request.args.get("q")
+    
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
-    pipeline = [
-        {
-            "$project": {
-                "name": 1,
-                "code": 1,
-                "official_name": 1,
-                "capital": 1,
-                "population": 1,
-                "region": 1,
-                "subregion": 1,
-                "area": 1,
-            }
-        },
-        {
-            "$facet": {
-                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
-                "metadata": [
-                    {"$group": {"_id": None, "count": {"$sum": 1}}},
-                    {
-                        "$project": {
-                            "_id": 0,
-                            "count": 1,
-                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
-                        }
-                    },
-                ],
-            }
-        },
-    ]
+    if search is not None:
+        pipeline = [
+            {
+                "$match": {
+                    "$or": [
+                        {"name": {"$regex": search, "$options": "i"}},
+                        {"code": {"$regex": search, "$options": "i"}},
+                        {"official_name": {"$regex": search, "$options": "i"}},
+                        {"capital": {"$regex": search, "$options": "i"}},
+                        {"region": {"$regex": search, "$options": "i"}},
+                        {"subregion": {"$regex": search, "$options": "i"}},
+                    ]
+                }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "code": 1,
+                    "official_name": 1,
+                    "capital": 1,
+                    "population": 1,
+                    "region": 1,
+                    "subregion": 1,
+                    "area": 1,
+                }
+            },
+            {
+                "$facet": {
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                }
+            },
+        ]
+    else:
+    
+        pipeline = [
+            {
+                "$project": {
+                    "name": 1,
+                    "code": 1,
+                    "official_name": 1,
+                    "capital": 1,
+                    "population": 1,
+                    "region": 1,
+                    "subregion": 1,
+                    "area": 1,
+                }
+            },
+            {
+                "$facet": {
+                    "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                    "metadata": [
+                        {"$group": {"_id": None, "count": {"$sum": 1}}},
+                        {
+                            "$project": {
+                                "_id": 0,
+                                "count": 1,
+                                "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                            }
+                        },
+                    ],
+                }
+            },
+        ]
 
     result = list(get_database().countries.aggregate(pipeline))
 

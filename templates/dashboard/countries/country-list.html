@@ -13,15 +13,20 @@
         <div class="row justify-content-between">
           <div class="col-sm-6 col-md-6">
             <div id="user_list_datatable_info" class="dataTables_filter">
-              <form class="mr-3 position-relative">
+              <form
+                class="mr-3 position-relative"
+                method="GET"
+                action="{{ url_for('panel.country_list') }}"
+              >
                 <div class="form-group mb-0">
-                  <!-- <input
+                  <input
                     type="search"
                     class="form-control"
                     id="exampleInputSearch"
+                    name="q"
                     placeholder="Search"
                     aria-controls="user-list-table"
-                  /> -->
+                  />
                 </div>
               </form>
             </div>
@@ -109,10 +114,12 @@
       </div>
       <div class="row justify-content-between mt-3">
         <div id="user-list-page-info" class="col-md-6">
+          {% if countries[0].data | length > 0 %}
           <span
             >Showing {{(pageNumber-1)*pageSize}} to {{pageNumber*pageSize}} of
             {{countries[0]['metadata'][0].count}} entries</span
           >
+          {% endif %}
         </div>
         <div class="col-md-6">
           <nav aria-label="Page navigation example">
