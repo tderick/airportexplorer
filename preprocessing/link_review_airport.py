@@ -30,14 +30,14 @@ for review in reviews:
         name = review["title"].replace("Airport customer review", "")
 
         # Update operation
-        # update_result = database.countries.update_many(
-        #     {"regions.airports.name": {"$regex": name, "$options": 'i'}},
-        #     {"$push": {"regions.$[].airports.$[].reviews": review['_id']}}
-        # )
         update_result = database.countries.update_many(
-            {"regions.airports.name": {"$regex": name, "$options": "i"}},
-            {"$unset": {"regions.$[].airports.$[].reviews": ""}},
+            {"regions.airports.name": {"$regex": name, "$options": 'i'}},
+            {"$push": {"regions.$[].airports.$[].reviews": review['_id']}}
         )
+        # update_result = database.countries.update_many(
+        #     {"regions.airports.name": {"$regex": name, "$options": "i"}},
+        #     {"$unset": {"regions.$[].airports.$[].reviews": ""}},
+        # )
 
         print("Matched:", update_result.matched_count)
         print("Modified:", update_result.modified_count)

@@ -48,7 +48,7 @@
         <div class="form-group">
             <label for="iso_country">Country:</label>
   
-            <select class="custom-select" id="inputGroupSelect04">
+            <select class="custom-select" id="inputGroupSelect04" name="iso_country">
               <option selected="">Choose...</option>
               {% for country in countries %}
               {% if airport %}
@@ -63,7 +63,7 @@
         <div class="form-group">
             <label for="iso_country">Region:</label>
   
-            <select class="custom-select" id="inputGroupSelect04">
+            <select class="custom-select" id="inputGroupSelect04" name="iso_region">
               <option selected="">Choose...</option>
               {% for region in regions %}
               {% if airport %}
@@ -103,7 +103,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="hidden" name="old_ident" value="{% if airport %}{{ airport.ident }}{% endif %}"/>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 
     </div>

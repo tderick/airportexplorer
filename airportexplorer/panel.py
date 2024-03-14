@@ -414,7 +414,7 @@ def create_or_edit_country():
     else:
         get_database().countries.update_one({"_id": ObjectId(_id)}, {"$set": data})
 
-    return redirect(url_for("panel.country_list"))
+    return redirect(url_for("panel.country_list", q=request.form.get("code")))
 
 
 @bp.route("/region-list/")
@@ -587,7 +587,7 @@ def create_or_edit_region():
                 }
             },
         )
-    return redirect(url_for("panel.region_list"))
+    return redirect(url_for("panel.region_list", q=request.form.get("name")))
 
 
 def get_all_regions():
@@ -606,26 +606,58 @@ def airport_add_update_form():
     regions = get_all_regions()
     
     if airport_ident is not None:
+        # pipeline = [
+        #     {"$unwind": "$regions"},  # Deconstruct the regions array
+        #     {
+        #         "$project": {
+        #             "filteredValue": {
+        #                 "$filter": {
+        #                     "input": "$regions.airports",
+        #                     "as": "airport",
+        #                     "cond": {"$eq": ["$$airport.ident", airport_ident]},
+        #                 }
+        #             }
+        #         }
+        #     },
+        # ]
         pipeline = [
-            {"$unwind": "$regions"},  # Deconstruct the regions array
+            {"$unwind": "$regions"},
+            {"$unwind": "$regions.airports"},
             {
                 "$project": {
-                    "filteredValue": {
-                        "$filter": {
-                            "input": "$regions.airports",
-                            "as": "airport",
-                            "cond": {"$eq": ["$$airport.ident", airport_ident]},
-                        }
-                    }
+                    "_id": 0,
+                    "ident": "$regions.airports.ident",
+                    "name": "$regions.airports.name",
+                    "type": "$regions.airports.type",
+                    "iata_code": "$regions.airports.iata_code",
+                    "icao_code": "$regions.airports.icao_code",
+                    "iso_country": "$regions.airports.iso_country",
+                    "continent": "$regions.airports.continent",
+                    "municipality": "$regions.airports.municipality",
+                    "latitude_deg": "$regions.airports.latitude_deg",
+                    "longitude_deg": "$regions.airports.longitude_deg",
+                    "elevation_ft": "$regions.airports.elevation_ft",
+                    "home_link": "$regions.airports.home_link",
+                    "gps_code": "$regions.airports.gps_code",
+                    "local_code": "$regions.airports.local_code",
+                    "iso_region": "$regions.airports.iso_region"
+                    
                 }
             },
+            {
+                "$match": {
+                    "ident": airport_ident
+                }
+            } 
         ]
-        airport_cursor = get_database().countries.aggregate(pipeline)
-        airport_raw = list(airport_cursor)[0]
+        airport = list(get_database().countries.aggregate(pipeline))
+        
+        # import pdb; pdb.set_trace()
+        # airport_raw = list(airport_cursor)[0]
 
-        airport = airport_raw["filteredValue"][0]
+        # airport = airport_raw["filteredValue"][0]
 
-        return render_template("dashboard/airports/airport-form.html", airport=airport, countries=countries, regions=regions)
+        return render_template("dashboard/airports/airport-form.html", airport=airport[0], countries=countries, regions=regions)
     else:
         return render_template("dashboard/airports/airport-form.html", countries=countries, regions=regions)
 
@@ -668,7 +700,7 @@ def create_or_edit_airport():
             {"$set": {"regions.$[].airports.$[xxx]": airport_data}},
             array_filters=[{"xxx.ident": old_ident}],
         )
-    return redirect(url_for("panel.airport_list"))
+    return redirect(url_for("panel.airport_list", q=request.form.get("ident")))
 
 
 @bp.route("/airports/quick-add/", methods=["POST"])
