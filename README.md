@@ -6,13 +6,12 @@
 pre-commit run --all-files
 ```
 
-## Full-Text Search
+## Command to run Celery Worker
+```
+celery --app=run.celery_app worker -l DEBUG 
+```
 
+## Celery Beat
 ```
-https://www.digitalocean.com/community/tutorials/how-to-perform-full-text-search-in-mongodb
-```
-
-## sss
-```
-https://pypi.org/project/auth0-python/
+https://medium.com/@thujuli/how-to-schedule-tasks-using-celery-in-flask-application-c004dd3c5e5c
 ```

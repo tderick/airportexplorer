@@ -1,9 +1,6 @@
-import requests
-from decouple import config
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask_login import login_required
 
-from airportexplorer import cache
 from airportexplorer.database import get_database
 
 bp = Blueprint("region", __name__, url_prefix="/manage")

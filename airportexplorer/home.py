@@ -2,11 +2,14 @@ from flask import Blueprint, render_template, request, url_for
 
 from airportexplorer.database import get_database
 
-bp = Blueprint("home", __name__, url_prefix="/")
+from airportexplorer.tasks import compute_reviews_and_rating
 
+bp = Blueprint("home", __name__, url_prefix="/")
 
 @bp.route("/")
 def home():
+    # compute_reviews_and_rating.delay()
+    
     return render_template("home/home.html")
 
 
