@@ -23,8 +23,8 @@
                     </a>
                 </li>
 
-                <li {% if request.path == url_for('panel.airport_list') %}class="active"{% endif %}>
-                    <a href="{{url_for('panel.airport_list')}}" >
+                <li {% if request.path == url_for('airport.airport_list') %}class="active"{% endif %}>
+                    <a href="{{url_for('airport.airport_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
                             width="20" height="20">
                             <path fill-rule="evenodd"
@@ -34,8 +34,8 @@
                         <span class="ml-3">Airports</span>
                     </a>
                 </li>
-                <li {% if request.path == url_for('panel.country_list') %}class="active"{% endif %}>
-                    <a href="{{url_for('panel.country_list')}}" >
+                <li {% if request.path == url_for('country.country_list') %}class="active"{% endif %}>
+                    <a href="{{url_for('country.country_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
                             width="20" height="20">
                             <path fill-rule="evenodd"
@@ -46,8 +46,8 @@
                     </a>
                 </li>
 
-                <li {% if request.path == url_for('panel.region_list') %}class="active"{% endif %}>
-                    <a href="{{url_for('panel.region_list')}}" >
+                <li {% if request.path == url_for('region.region_list') %}class="active"{% endif %}>
+                    <a href="{{url_for('region.region_list')}}" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
                             width="20" height="20">
                             <path fill-rule="evenodd"

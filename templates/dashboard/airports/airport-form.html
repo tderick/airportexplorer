@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="card-body">
-      <form method="post" action="{{ url_for('panel.create_or_edit_airport')}}">
+      <form method="post" action="{{ url_for('airport.create_or_edit_airport')}}">
         <div class="form-group">
             <label for="ident">Ident:</label>
             <input type="text" class="form-control" name="ident" {% if airport %} value="{{ airport.ident }}" {% endif %}>
@@ -44,10 +44,10 @@
             <label for="continent">Continent:</label>
             <input type="text" class="form-control" name="continent" {% if airport %} value="{{ airport.continent }}" {% endif %}>
         </div>
-    
+
         <div class="form-group">
             <label for="iso_country">Country:</label>
-  
+
             <select class="custom-select" id="inputGroupSelect04" name="iso_country">
               <option selected="">Choose...</option>
               {% for country in countries %}
@@ -62,7 +62,7 @@
 
         <div class="form-group">
             <label for="iso_country">Region:</label>
-  
+
             <select class="custom-select" id="inputGroupSelect04" name="iso_region">
               <option selected="">Choose...</option>
               {% for region in regions %}

@@ -15,7 +15,7 @@
               <form
                 class="mr-3 position-relative"
                 method="GET"
-                action="{{ url_for('panel.region_list') }}"
+                action="{{ url_for('region.region_list') }}"
               >
                 <div class="form-group mb-0">
                   <input
@@ -34,7 +34,7 @@
             <div class="user-list-files d-flex">
               <a
                 class="bg-primary"
-                href="{{ url_for('panel.region_add_update_form') }}"
+                href="{{ url_for('region.region_add_update_form') }}"
               >
                 New Region
               </a>
@@ -73,14 +73,14 @@
                     data-placement="top"
                     title=""
                     data-original-title="Edit"
-                    href="{{ url_for('panel.region_add_update_form', code=region.code) }}"
+                    href="{{ url_for('region.region_add_update_form', code=region.code) }}"
                     ><i class="ri-pencil-line mr-0"></i
                   ></a>
                   <form
                     method="POST"
                     class="delete-message"
-                    data-route="{{ url_for('panel.region_delete', code=region.code) }}"
-                    data-returnurl="{{ url_for('panel.region_list') }}"
+                    data-route="{{ url_for('region.region_delete', code=region.code) }}"
+                    data-returnurl="{{ url_for('region.region_list') }}"
                   >
                     <input
                       type="hidden"

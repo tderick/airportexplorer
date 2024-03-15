@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="card-body">
-      <form method="POST" action="{{ url_for('panel.quick_airport_add') }}">
+      <form method="POST" action="{{ url_for('airport.quick_airport_add') }}">
         <input
           class="floating-input form-control"
           type="text"
@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="card-body">
-      <form method="POST" action="{{ url_for('panel.quick_airport_add') }}">
+      <form method="POST" action="{{ url_for('airport.quick_airport_add') }}">
         <input
           class="floating-input form-control"
           type="text"
@@ -58,7 +58,7 @@
               <form
                 class="mr-3 position-relative"
                 method="GET"
-                action="{{ url_for('panel.airport_list') }}"
+                action="{{ url_for('airport.airport_list') }}"
               >
                 <div class="form-group mb-0">
                   <input
@@ -77,7 +77,7 @@
             <div class="user-list-files d-flex">
               <a
                 class="bg-primary"
-                href="{{ url_for('panel.airport_add_update_form') }}"
+                href="{{ url_for('airport.airport_add_update_form') }}"
                 >New Airport
               </a>
             </div>
@@ -121,14 +121,14 @@
                     data-placement="top"
                     title=""
                     data-original-title="Edit"
-                    href="{{ url_for('panel.airport_add_update_form', ident=airport.ident) }}"
+                    href="{{ url_for('airport.airport_add_update_form', ident=airport.ident) }}"
                     ><i class="ri-pencil-line mr-0"></i
                   ></a>
                   <form
                     method="POST"
                     class="delete-message"
-                    data-route="{{ url_for('panel.airport_delete', airport_id=airport.ident) }}"
-                    data-returnurl="{{ url_for('panel.airport_list') }}"
+                    data-route="{{ url_for('airport.airport_delete', airport_id=airport.ident) }}"
+                    data-returnurl="{{ url_for('airport.airport_list') }}"
                   >
                     <input
                       type="hidden"

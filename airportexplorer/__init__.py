@@ -46,11 +46,14 @@ def create_app():
         return User.get_by_email(user_id)
 
     # Register Blieprints
-    from . import auth, errors, home, panel
+    from . import airport, auth, country, errors, home, panel, region
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(home.bp)
     app.register_blueprint(panel.bp)
     app.register_blueprint(errors.bp)
+    app.register_blueprint(country.bp)
+    app.register_blueprint(region.bp)
+    app.register_blueprint(airport.bp)
 
     return app
