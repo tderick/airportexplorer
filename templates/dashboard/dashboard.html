@@ -98,4 +98,101 @@
   </div>
 </div>
 
+<div class="col-lg-6 col-md-6 col-xl-6">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">
+          Top 10 airports with the high number of reviews
+        </h4>
+      </div>
+    </div>
+    <div class="card-body rec-pat p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 table-borderless">
+          <thead class="">
+            <tr>
+              <th>Airport Name</th>
+              <th>Airport Code</th>
+              <th>Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for airport in airport_with_higth_review %}
+            <tr>
+              <td>{{airport.airport_name}}</td>
+              <td>{{airport.airport_code}}</td>
+              <td>{{airport.total_reviews}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-6 col-md-6 col-xl-6">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">Top 10 most not recommend airports</h4>
+      </div>
+    </div>
+    <div class="card-body rec-pat p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 table-borderless">
+          <thead class="">
+            <tr>
+              <th>Airport Name</th>
+              <th>Airport Code</th>
+              <th>Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for airport in most_not_recommend_aiport %}
+            <tr>
+              <td>{{airport.airport_name}}</td>
+              <td>{{airport.airport_code}}</td>
+              <td>{{airport.total_not_recommended}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-12 col-md-12 col-xl-12">
+  <div class="card card-block card-stretch card-height">
+    <div class="card-header d-flex justify-content-between">
+      <div class="header-title">
+        <h4 class="card-title">Top 10 reviews with the most number of likes</h4>
+      </div>
+    </div>
+    <div class="card-body rec-pat p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0 table-borderless">
+          <thead class="">
+            <tr>
+              <th>Title</th>
+              <th>Content</th>
+              <th>Like</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for airport in reviews_with_most_likes %}
+            <tr>
+              <td>{{airport.title}}</td>
+              <td>{{airport.content}}</td>
+              <td>{{airport.likes}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock page_content_wrapper %}
