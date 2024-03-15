@@ -1,0 +1,102 @@
+{% extends 'base.html' %} {% block squeleton_wrapper %}
+
+<!--BEGIN: Start Footer -->
+{% include "home/header.html" %}
+<!--BEGIN: Start Footer -->
+
+<div class="container-fluid" style="padding-top: 80px !important">
+  <div class="row height-self-center">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <div class="header-title">
+            <h4 class="card-title">Search Term: {{query}}</h4>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <div class="row justify-content-between">
+              <div class="col-sm-6 col-md-6">
+                <div id="user_list_datatable_info" class="dataTables_filter">
+                  <form
+                    class="mr-3 position-relative"
+                    method="GET"
+                    action="{{ url_for('home.airport_by_country') }}"
+                  >
+                    <div class="form-group mb-0">
+                      <input
+                        type="search"
+                        class="form-control"
+                        name="q"
+                        placeholder="Enter Country Name"
+                        aria-controls="user-list-table"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-6"></div>
+            </div>
+            <!-- START NOT FOUND MESSAGE-->
+            {% if airports[0]['data']|length == 0 %}
+            <div class="alert alert-danger mt-4 mb-5" role="alert">
+              No result found for the search term: {{query}}
+            </div>
+            <!-- END NOT FOUND MESSAGE-->
+            {% else %}
+
+            <table
+              id="user-list-table"
+              class="table table-striped dataTable mt-4"
+              role="grid"
+              aria-describedby="user-list-page-info"
+            >
+              <thead>
+                <tr class="ligth">
+                  <th>Region</th>
+                  <th>Number Airport</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for airport in airports[0]['data'] %}
+                <tr>
+                  <td>{{ airport._id }}</td>
+                  <td>{{ airport.totalAirports }}</td>
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+          </div>
+          <!-- START PAGINATION-->
+          {% if airports[0]['data']|length > 0 %}
+          <div class="row justify-content-between mt-3">
+            <div id="user-list-page-info" class="col-md-6">
+              <span
+                >Showing {{(pageNumber-1)*pageSize}} to {{pageNumber*pageSize}}
+                of {{airports[0]['metadata'][0].count}} entries</span
+              >
+            </div>
+            <div class="col-md-6">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item">
+                    <a class="page-link" href="{{prev_url}}">Previous</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="{{next_url}}">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          {% endif %}
+          <!-- END PAGINATION-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock squeleton_wrapper %}

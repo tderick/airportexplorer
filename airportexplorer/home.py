@@ -102,5 +102,49 @@ def airport_details():
     ]
 
     airport = list(get_database().countries.aggregate(pipeline))
-
+    
     return render_template("home/airport-details.html", airport=airport[0])
+
+@bp.route("/airport-by-country/")
+def airport_by_country():
+    query = request.args.get("q") if request.args.get("q") else "Italy"
+
+    pageNumber = (
+        int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    )
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
+
+    pipeline = [
+        {"$match": {"name": {"$regex": query, "$options": "i"}}},  # Match the specified country
+        {"$unwind": "$regions"},  # Unwind the regions array
+        {"$group": {"_id": "$regions.name", "totalAirports": {"$sum": {"$size": "$regions.airports"}}, }},  # Group by region name and count the number of airports
+         {"$sort": {"totalAirports": -1}},  # Sort by totalAirports in descending order
+        {"$facet": {
+            "data": [
+                {"$skip": (pageNumber - 1) * pageSize},  # Skip to the specified page
+                {"$limit": pageSize}  # Limit the number of results per page
+            ],
+            "metadata": [
+                {"$count": "count"},  # Count the total number of regions
+                {"$project": {
+                    "_id": 0,
+                    "count": 1,
+                    "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}  # Calculate the total number of pages
+                }}
+            ]
+        }}
+    ]
+
+    result = list(get_database().countries.aggregate(pipeline))
+    
+    
+    next_url = url_for(
+        "home.airport_by_country", pageNumber=pageNumber + 1, pageSize=pageSize, q=query
+    )
+    prev_url = url_for(
+        "home.airport_by_country", pageNumber=pageNumber - 1, pageSize=pageSize, q=query
+    )
+    
+    return render_template("home/airport-by-country.html", query=query, airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
+    
+    
