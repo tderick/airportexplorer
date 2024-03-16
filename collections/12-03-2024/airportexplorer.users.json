@@ -1,0 +1,26 @@
+[{
+  "_id": {
+    "$oid": "65f14c3dde8a2342b0f12eb1"
+  },
+  "email": "kindderick@gmail.com",
+  "sub": "kindderick@gmail.com",
+  "nickname": "kindderick",
+  "email_verified": true,
+  "is_onboarding_complete": true,
+  "is_admin": true,
+  "first_name": "DERICK",
+  "last_name": "TEMFACK"
+},
+{
+  "_id": {
+    "$oid": "65f45f904e7f49730556f895"
+  },
+  "email": "dericktemfack@gmail.com",
+  "sub": "dericktemfack@gmail.com",
+  "nickname": "dericktemfack",
+  "email_verified": false,
+  "is_onboarding_complete": true,
+  "is_admin": true,
+  "first_name": "DERICK",
+  "last_name": "TEMFACK"
+}]
