@@ -1,3 +1,4 @@
+import redis
 from urllib.parse import quote_plus
 
 from decouple import config
@@ -26,3 +27,9 @@ def get_database():
         g.database = mongoclient.get_database(MONGO_DATABASE)
 
     return g.database
+
+def get_redis():
+    if "redis" not in g:
+        g.redis = redis.StrictRedis.from_url(config("REDIS_URL", default="redis://localhost:6379/0"))
+
+    return g.redis

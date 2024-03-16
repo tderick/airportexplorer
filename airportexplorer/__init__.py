@@ -9,7 +9,13 @@ from celery import Celery, Task
 
 from .models import User
 
-cache = Cache(config={"CACHE_TYPE": "redis", "CACHE_REDIS_URL": config("REDIS_URL")})
+cache = Cache(config={
+    "CACHE_TYPE": "redis", 
+    "CACHE_REDIS_URL": config("REDIS_URL"),
+    "CACHE_DEFAULT_TIMEOUT": 60,
+    "CACHE_KEY_PREFIX": "airportexplorer:",
+    
+})
 
 csrf = CSRFProtect()
 

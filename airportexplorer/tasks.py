@@ -1,42 +1,46 @@
 from celery import shared_task
-from airportexplorer.database import get_database
+from airportexplorer.database import get_database, get_redis
 
 
 @shared_task(ignore_result=False)
 def compute_reviews_and_rating(airport: str):
-   
-        try:
-            best_reviews = top_5_best_review(airport)
-            worst_reviews = top_5_worst_review(airport)
-            average_rating = airport_average_rating(airport)
+    
+    # Invalidate Cache
+    key = f"airportexplorer:airport_details:{airport}"
+    get_redis().delete(key)
+    
+    try:
+        best_reviews = top_5_best_review(airport)
+        worst_reviews = top_5_worst_review(airport)
+        average_rating = airport_average_rating(airport)
 
-            get_database().countries.update_one(
-                {"regions.airports.ident": airport},
-                {
-                    "$unset": {
-                    "regions.$[].airports.$[].fivebestreviews": "",
-                        "regions.$[].airports.$[].fiveworstreview": "",
-                        "regions.$[].airports.$[].average_rating": ""
-                    }
+        get_database().countries.update_one(
+            {"regions.airports.ident": airport},
+            {
+                "$unset": {
+                "regions.$[].airports.$[].fivebestreviews": "",
+                    "regions.$[].airports.$[].fiveworstreview": "",
+                    "regions.$[].airports.$[].average_rating": ""
                 }
-            )
-            
-            get_database().countries.update_one(
-                {"regions.airports.ident": airport},
-                {
-                    "$push": {
-                        "regions.$[].airports.$[].fivebestreviews": best_reviews,
-                        "regions.$[].airports.$[].fiveworstreview": worst_reviews,
-                        "regions.$[].airports.$[].average_rating": average_rating
-                    }
-                }
-            )
-            
-            print("Reviews and ratings computed for", airport, best_reviews, worst_reviews, average_rating)
+            }
+        )
         
-        except Exception as e:
-            print("Error", e)
-            pass
+        get_database().countries.update_one(
+            {"regions.airports.ident": airport},
+            {
+                "$push": {
+                    "regions.$[].airports.$[].fivebestreviews": best_reviews,
+                    "regions.$[].airports.$[].fiveworstreview": worst_reviews,
+                    "regions.$[].airports.$[].average_rating": average_rating
+                }
+            }
+        )
+        
+        print("Reviews and ratings computed for", airport, best_reviews, worst_reviews, average_rating)
+    
+    except Exception as e:
+        print("Error", e)
+        pass
 
 def top_5_best_review(airport_code):
     pipeline = [

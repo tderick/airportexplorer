@@ -1,15 +1,15 @@
+import json
+
 from bson.objectid import ObjectId
-from flask import Blueprint, render_template, request, url_for, redirect
+from flask import Blueprint, render_template, request, url_for, redirect, jsonify
 
-from airportexplorer.database import get_database
-
+from airportexplorer.database import get_database, get_redis
 from airportexplorer.tasks import compute_reviews_and_rating
 
 bp = Blueprint("home", __name__, url_prefix="/")
 
 @bp.route("/")
 def home():
-    
     return render_template("home/home.html")
 
 
@@ -63,8 +63,15 @@ def airport_result():
             }
         },
     ]
+    
 
-    result = list(get_database().countries.aggregate(pipeline))
+    key = f"airportexplorer:airport_search:{query}:{pageNumber}:{pageSize}"
+    
+    if get_redis().exists(key):
+        result = json.loads(get_redis().get(key))
+    else:
+        result = list(get_database().countries.aggregate(pipeline))
+        get_redis().set(key, json.dumps(result), ex=600)
 
     next_url = url_for(
         "home.airport_result", pageNumber=pageNumber + 1, pageSize=pageSize, q=query
@@ -141,9 +148,14 @@ def airport_by_country():
         }}
     ]
 
-    result = list(get_database().countries.aggregate(pipeline))
+    key = f"airportexplorer:airport_by_country:{query}:{pageNumber}:{pageSize}"
     
-    
+    if get_redis().exists(key):
+        result = json.loads(get_redis().get(key))
+    else:
+        result = list(get_database().countries.aggregate(pipeline))
+        get_redis().set(key, json.dumps(result), ex=600)
+        
     next_url = url_for(
         "home.airport_by_country", pageNumber=pageNumber + 1, pageSize=pageSize, q=query
     )
