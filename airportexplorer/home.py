@@ -150,4 +150,50 @@ def airport_by_country():
     
     return render_template("home/airport-by-country.html", query=query, airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
     
+
+@bp.route("/reviews-list/")
+def reviews_list():
+    query = request.args.get("airport")
+
+    pageNumber = (
+        int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
+    )
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
+
+    pipeline = [
+        {"$match": {"airport": query}},
+        {
+            "$facet": {
+                "data": [{"$skip": (pageNumber - 1) * pageSize}, {"$limit": pageSize}],
+                "metadata": [
+                    {"$group": {"_id": None, "count": {"$sum": 1}}},
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "count": 1,
+                            "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}},
+                        }
+                    },
+                ],
+            }
+        },
+    ]
+
+    result = list(get_database().reviews.aggregate(pipeline))
+
+    next_url = url_for(
+        "home.reviews_list", pageNumber=pageNumber + 1, pageSize=pageSize, airport=query
+    )
+    prev_url = url_for(
+        "home.reviews_list", pageNumber=pageNumber - 1, pageSize=pageSize, airport=query
+    )
     
+
+    return render_template("home/reviews-list.html",
+        reviews=result,
+        pageNumber=pageNumber,
+        pageSize=pageSize,
+        next_url=next_url,
+        prev_url=prev_url,
+        query=query
+        )

@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block squeleton_wrapper %}
+
+<!--BEGIN: Start Footer -->
+{% include "home/header.html" %}
+<!--BEGIN: Start Footer -->
+
+<div class="container-fluid" style="padding-top: 80px !important">
+  <div class="row height-self-center">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <div class="header-title">
+            {% if reviews[0]['data'] | length > 0 %}
+            <h4 class="card-title">{{reviews[0]['data'][0].title}}s</h4>
+            {% endif %}
+          </div>
+          <a
+            href="{{ url_for('home.airport_details', ident=query) }}"
+            class="btn btn-primary mt-1"
+            >Back</a
+          >
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <!-- START NOT FOUND MESSAGE-->
+            {% if reviews[0]['data']|length == 0 %}
+            <div class="alert alert-danger mt-4 mb-5" role="alert">
+              No Reviews For the Airport {{query}}
+            </div>
+            <!-- END NOT FOUND MESSAGE-->
+            {% else %}
+
+            <table
+              id="user-list-table"
+              class="table table-striped dataTable mt-0"
+              role="grid"
+              aria-describedby="user-list-page-info"
+            >
+              <thead>
+                <tr class="ligth">
+                  <th>AUTHOR</th>
+                  <th>CONTENT</th>
+                  <th>LIKES</th>
+                  <th>RATING</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for review in reviews[0]['data'] %}
+                <tr>
+                  <td>{{ review.author }}</td>
+                  <td>{{ review.content }}</td>
+                  <td>{{ review.likes }}</td>
+                  <td>{{ review.overall_rating }}</td>
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+          </div>
+          <!-- START PAGINATION-->
+          {% if reviews[0]['data']|length > 0 %}
+          <div class="row justify-content-between mt-3">
+            <div id="user-list-page-info" class="col-md-6">
+              <span
+                >Showing {{(pageNumber-1)*pageSize}} to {{pageNumber*pageSize}}
+                of {{reviews[0]['metadata'][0].count}} entries</span
+              >
+            </div>
+            <div class="col-md-6">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item">
+                    <a class="page-link" href="{{prev_url}}">Previous</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="{{next_url}}">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+          {% endif %}
+          <!-- END PAGINATION-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock squeleton_wrapper %}

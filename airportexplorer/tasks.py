@@ -12,7 +12,7 @@ def countries_ident():
                 "regions.airports.fiveworstreview": { "$exists": False }  # Filter airports without the "fiveworstreview" array
             } 
         },
-        { "$project": { "_id": 0, "ident": "$regions.airports.ident" } }
+        { "$project": { "_id": 0, "ident": "$regions.airports.ident" } }  # Project the airport ident field
     ]
 
     return get_database().countries.aggregate(pipeline)
@@ -22,22 +22,46 @@ def compute_reviews_and_rating():
     countries = countries_ident()
     
     for country in countries:
-        airport_ident = country["ident"]
-        best_reviews = top_5_best_review(airport_ident)
-        worst_reviews = top_5_worst_review(airport_ident)
-        average_rating = airport_average_rating(airport_ident)
+        try:
+            airport_ident = country["ident"]
+            best_reviews = top_5_best_review(airport_ident)
+            worst_reviews = top_5_worst_review(airport_ident)
+            average_rating = airport_average_rating(airport_ident)
 
-        get_database().countries.update_one(
-            {"regions.airports.ident": airport_ident},
-            {
-                "$set": {
-                    "regions.airports.$.fivebestreviews": best_reviews,
-                    "regions.airports.$.fiveworstreview": worst_reviews,
-                    "regions.airports.$.average_rating": average_rating
+            get_database().countries.update_one(
+                {"regions.airports.ident": airport_ident},
+                {
+                    "$unset": {
+                    "regions.$[].airports.$[].fivebestreviews": "",
+                        "regions.$[].airports.$[].fiveworstreview": "",
+                        "regions.$[].airports.$[].average_rating": ""
+                    }
                 }
-            }
-        )
-        print(airport_ident, best_reviews, worst_reviews, average_rating)
+            )
+            
+            get_database().countries.update_one(
+                {"regions.airports.ident": airport_ident},
+                {
+                    "$push": {
+                        "regions.$[].airports.$[].fivebestreviews": best_reviews,
+                        "regions.$[].airports.$[].fiveworstreview": worst_reviews,
+                        "regions.$[].airports.$[].average_rating": average_rating
+                    }
+                }
+            )
+            # update_result = database.countries.update_many(
+            #     {"regions.airports.name": {"$regex": name, "$options": 'i'}},
+            #     {"$push": {"regions.$[].airports.$[].reviews": review['_id']}}
+            # )
+            #    get_database().countries.update_one(
+            #                     {"code": country_code, "regions.code": region_code},
+            #                     {"$push": {"regions.$.airports": airport_data}},
+            #                 )
+            print(airport_ident, best_reviews, worst_reviews, average_rating)
+        
+        except Exception as e:
+            print("Error", e)
+            continue
 
 def top_5_best_review(airport_code):
     pipeline = [

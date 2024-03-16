@@ -12,6 +12,11 @@
           <div class="header-title">
             <h4 class="card-title">{{ airport.regions.airports[0].name }}</h4>
           </div>
+          <a
+            href="{{ url_for('home.reviews_list', airport=airport.regions.airports[0].ident) }}"
+            class="btn btn-primary mt-1"
+            >Reviews List</a
+          >
         </div>
         <div class="card-body">
           <div
