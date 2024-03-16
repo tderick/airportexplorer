@@ -41,6 +41,7 @@
                   <th>AUTHOR</th>
                   <th>CONTENT</th>
                   <th>LIKES</th>
+                  <th>ACTION</th>
                 </tr>
               </thead>
               <tbody>
@@ -49,6 +50,13 @@
                   <td>{{ review.author }}</td>
                   <td>{{ review.content }}</td>
                   <td>{{ review.likes }}</td>
+                  <td>
+                    <a
+                      href="{{ url_for('home.like_review', id=review._id, airport=query) }}"
+                      class="btn btn-primary btn-sm"
+                      >Like</a
+                    >
+                  </td>
                 </tr>
 
                 {% endfor %}

@@ -161,7 +161,7 @@ def reviews_list():
     pageNumber = (
         int(request.args.get("pageNumber")) if request.args.get("pageNumber") else 1
     )
-    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
+    pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 5
 
     pipeline = [
         {"$match": {"airport": query}},
@@ -200,3 +200,8 @@ def reviews_list():
         prev_url=prev_url,
         query=query
         )
+
+
+@bp.route("/like-review/")    
+def like_review():
+    pass
