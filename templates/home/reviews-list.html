@@ -25,7 +25,7 @@
             <!-- START NOT FOUND MESSAGE-->
             {% if reviews[0]['data']|length == 0 %}
             <div class="alert alert-danger mt-4 mb-5" role="alert">
-              No Reviews For the Airport {{query}}
+              No Reviews For the Airport with the ICAO {{query}}
             </div>
             <!-- END NOT FOUND MESSAGE-->
             {% else %}
@@ -41,7 +41,6 @@
                   <th>AUTHOR</th>
                   <th>CONTENT</th>
                   <th>LIKES</th>
-                  <th>RATING</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,7 +49,6 @@
                   <td>{{ review.author }}</td>
                   <td>{{ review.content }}</td>
                   <td>{{ review.likes }}</td>
-                  <td>{{ review.overall_rating }}</td>
                 </tr>
 
                 {% endfor %}

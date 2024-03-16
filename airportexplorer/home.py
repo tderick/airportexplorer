@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for
+from flask import Blueprint, render_template, request, url_for, redirect
 
 from airportexplorer.database import get_database
 
@@ -105,6 +105,9 @@ def airport_details():
     ]
 
     airport = list(get_database().countries.aggregate(pipeline))
+    
+    if len(airport) == 0:
+        return redirect(url_for("home.home"))
     
     return render_template("home/airport-details.html", airport=airport[0])
 
