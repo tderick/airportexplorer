@@ -1,9 +1,9 @@
 version: "3.7"
 
 services:
-  airportexplorerdev:
+  airportexplorerdev_web:
     build: .
-    container_name: airportexplorerdev
+    container_name: airportexplorerdev_web
     restart: unless-stopped
     expose:
       - 9000
@@ -13,3 +13,15 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
+  airportexplorerdev_redis_dev:
+    image: redis:7-alpine
+    container_name: airportexplorerdev_redis_dev
+    restart: unless-stopped
+
+  airportexplorerdev_celery_dev:
+    build: .
+    command: celery --app=run.celery_app worker -l INFO
+    container_name: airportexplorerdev_celery_dev
+    restart: unless-stopped
+    depends_on:
+      - airportexplorerdev_redis_dev
