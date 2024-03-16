@@ -4,7 +4,7 @@
 {% include "home/header.html" %}
 <!--BEGIN: Start Footer -->
 
-<div class="container-fluid" style="padding-top: 80px !important">
+<div class="container-fluid" style="padding-top: 85px !important">
   <div class="row">
     <div class="col-sm-12 col-lg-6">
       <div class="card">
@@ -281,133 +281,267 @@
       </div>
     </div>
   </div>
-  <!--
+
   <div class="row">
-    <div class="col-sm-12 col-lg-6">
+    <div class="col-sm-12 col-lg-8">
       <div class="card">
         <div class="card-header d-flex justify-content-between">
           <div class="header-title">
-            <h4 class="card-title">Basic Line Alerts</h4>
+            <h4 class="card-title">5 Best Reviews</h4>
           </div>
         </div>
-        <div class="card-body">
-          <p class="mb-4">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever
-          </p>
-          <div class="alert bg-white alert-primary" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>primary</b> alert—check it out!
+
+        <div class="card-body rec-pat p-0">
+          <div class="table-responsive">
+            {% if airport.regions.airports[0].fivebestreviews[0] | length > 0 %}
+            <table class="table table-striped mb-0 table-borderless">
+              <thead class="">
+                <tr>
+                  <th>Title</th>
+                  <th>Content</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for airport in airport.regions.airports[0].fivebestreviews[0]
+                %}
+                <tr>
+                  <td>{{airport.author}}</td>
+                  <td>{{airport.content}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+              <div class="iq-alert-text">
+                No reviews found
+              </div>
             </div>
+            {% endif %}
           </div>
-          <div class="alert bg-white alert-secondary" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>secondary</b> alert—check it out!
-            </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <div class="header-title">
+            <h4 class="card-title">5 Worst Reviews</h4>
           </div>
-          <div class="alert bg-white alert-success" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>success</b> alert—check it out!
+        </div>
+
+        <div class="card-body rec-pat p-0">
+          <div class="table-responsive">
+            {% if airport.regions.airports[0].fiveworstreview[0] | length > 0 %}
+            <table class="table table-striped mb-0 table-borderless">
+              <thead class="">
+                <tr>
+                  <th>Title</th>
+                  <th>Content</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for airport in airport.regions.airports[0].fiveworstreview[0]
+                %}
+                <tr>
+                  <td>{{airport.author}}</td>
+                  <td>{{airport.content}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-warning" role="alert">
+              <div class="iq-alert-text">
+                No reviews found
+              </div>
             </div>
-          </div>
-          <div class="alert bg-white alert-danger" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>danger</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-warning" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>warning</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-info" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>info</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-light" role="alert">
-            <div class="iq-alert-text">
-              A simple <b>light</b> alert—check it out!
-            </div>
+            {% endif %}
           </div>
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-lg-6">
+    <div class="col-sm-4 col-lg-4">
       <div class="card">
         <div class="card-header d-flex justify-content-between">
           <div class="header-title">
-            <h4 class="card-title">Basic Line Alerts With Icons</h4>
+            <h4 class="card-title">Airport Rating</h4>
           </div>
         </div>
         <div class="card-body">
-          <p class="mb-4">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever
-          </p>
-          <div class="alert bg-white alert-primary" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-alert-line"></i>
+          <div
+            class="profile-line m-0 d-flex align-items-center justify-content-between position-relative"
+          >
+          {% if airport.regions.airports[0].average_rating[0] | length > 0 %}
+            {% with rating=airport.regions.airports[0].average_rating[0][0] %}
+            <ul class="list-inline p-0 m-0 w-100">
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Queuing</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary mt-1"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_queuing_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Terminal Cleanliness</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_terminal_cleanliness_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Terminal Seating</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_terminal_seating_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Terminal Signs</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_terminal_signs_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Food Beverages</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_food_beverages_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Airport Shopping</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_airport_shopping_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <!---->
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Wifi Connectivity</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_wifi_connectivity_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="row align-items-top">
+                  <div class="col-md-6">
+                    <h6 class="mb-2">Airport Staff</h6>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="media profile-media align-items-top">
+                      <div class="profile-dots border-primary"></div>
+                      <div class="ml-4">
+                        <h5>
+                          {{ rating.average_airport_staff_rating }}
+                          <i class="ri-star-fill text-warning"></i>
+                          
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            {% endwith %}
+            {% else %}
+            <div class="alert alert-warning col-md-12" role="alert">
+              <div class="iq-alert-text">
+                No rating found
+              </div>
             </div>
-            <div class="iq-alert-text">
-              A simple <b>primary</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-secondary" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-information-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>secondary</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-success" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-alert-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>success</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-danger" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-information-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>danger</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-warning" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-alert-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>warning</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-info" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-information-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>info</b> alert—check it out!
-            </div>
-          </div>
-          <div class="alert bg-white alert-light" role="alert">
-            <div class="iq-alert-icon">
-              <i class="ri-alert-line"></i>
-            </div>
-            <div class="iq-alert-text">
-              A simple <b>light</b> alert—check it out!
-            </div>
+            {% endif %}
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row">
+  <!--<div class="row">
     <div class="col-sm-12 col-lg-6">
       <div class="card">
         <div class="card-header d-flex justify-content-between">
@@ -966,6 +1100,7 @@
       </div>
     </div>
   </div> -->
-</div>
+  </div>
 
-{% endblock squeleton_wrapper %}
+  {% endblock squeleton_wrapper %}
+</div>
