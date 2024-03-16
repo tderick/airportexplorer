@@ -1,11 +1,8 @@
 from urllib.parse import quote_plus
 
-import pandas as pd
-import requests
+from auth0.authentication import Database, GetToken
 from decouple import config
 from pymongo.mongo_client import MongoClient
-from auth0.authentication import Database
-from auth0.authentication import GetToken
 
 auth0_database = Database(config("AUTH0_DOMAIN"), config("AUTH0_CLIENT_ID"))
 

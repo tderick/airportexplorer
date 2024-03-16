@@ -1,6 +1,6 @@
-import redis
 from urllib.parse import quote_plus
 
+import redis
 from decouple import config
 from flask import g
 from pymongo.mongo_client import MongoClient
@@ -19,7 +19,9 @@ def get_database():
         + username
         + ":"
         + password
-        + "@"+ config("CONNEXION_STRING")+"&authSource=admin&retryWrites=true"
+        + "@"
+        + config("CONNEXION_STRING")
+        + "&authSource=admin&retryWrites=true"
     )
 
     if "database" not in g:
@@ -28,8 +30,11 @@ def get_database():
 
     return g.database
 
+
 def get_redis():
     if "redis" not in g:
-        g.redis = redis.StrictRedis.from_url(config("REDIS_URL", default="redis://localhost:6379/0"))
+        g.redis = redis.StrictRedis.from_url(
+            config("REDIS_URL", default="redis://localhost:6379/0")
+        )
 
     return g.redis

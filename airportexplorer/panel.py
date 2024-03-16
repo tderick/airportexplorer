@@ -1,4 +1,4 @@
-from flask import Blueprint,redirect, render_template, url_for
+from flask import Blueprint, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from airportexplorer.database import get_database
@@ -13,12 +13,11 @@ def _check_rights():
         return redirect(url_for("home.home"))
 
 
-
 @bp.route("/")
 @login_required
 def dashboard():
-    
-    # Count the number of countries, regions and airports    
+
+    # Count the number of countries, regions and airports
     nbre_countries = get_database().countries.count_documents({})
     nbre_regions = list(
         get_database().countries.aggregate(
@@ -46,7 +45,7 @@ def dashboard():
 
     # Top 10 reviews which receive the most number of like
     reviews_with_most_likes = top_10_reviews_which_receive_the_most_number_of_like()
-    
+
     # Top 10 most not recommend airport
     most_not_recommend_aiport = top_10_most_not_recommend_airport()
 
@@ -59,7 +58,7 @@ def dashboard():
         high_number_of_airports=high_number_of_airports,
         airport_with_higth_review=airport_with_higth_review,
         reviews_with_most_likes=reviews_with_most_likes,
-        most_not_recommend_aiport=most_not_recommend_aiport
+        most_not_recommend_aiport=most_not_recommend_aiport,
     )
 
 
@@ -68,6 +67,7 @@ def dashboard():
 def user_list():
     users = get_database().users.find()
     return render_template("dashboard/users/user-list.html", users=users)
+
 
 def count_airport_of_different_size():
     pipeline = [
@@ -113,56 +113,78 @@ def top_7_countries_with_high_number_of_airports():
 
 def top_10_airport_with_hight_number_of_review():
     pipeline = [
-        {"$match": {"$and": [{"airport": {"$ne": None}}, {"airport_name": {"$ne": None}}]}},
-        {"$group": {"_id": "$airport", "total_reviews": {"$sum": 1}, "airport_name": {"$first": "$airport_name"}}},
+        {
+            "$match": {
+                "$and": [{"airport": {"$ne": None}}, {"airport_name": {"$ne": None}}]
+            }
+        },
+        {
+            "$group": {
+                "_id": "$airport",
+                "total_reviews": {"$sum": 1},
+                "airport_name": {"$first": "$airport_name"},
+            }
+        },
         {"$sort": {"total_reviews": -1}},
         {"$limit": 10},
-        {"$project": {
-            "_id": 0,
-            "airport_code": "$_id",
-            "airport_name": 1,
-            "total_reviews": 1
-        }}
+        {
+            "$project": {
+                "_id": 0,
+                "airport_code": "$_id",
+                "airport_name": 1,
+                "total_reviews": 1,
+            }
+        },
     ]
 
     return list(get_database().reviews.aggregate(pipeline))
+
 
 def top_10_reviews_which_receive_the_most_number_of_like():
     pipeline = [
         {"$match": {"likes": {"$gt": 0}}},
         {"$sort": {"likes": -1}},
         {"$limit": 10},
-        {"$project": {
-            "_id": 1,
-            "title": 1,
-            "author": 1,
-            "likes": 1,
-            "content": 1,
-        }}
+        {
+            "$project": {
+                "_id": 1,
+                "title": 1,
+                "author": 1,
+                "likes": 1,
+                "content": 1,
+            }
+        },
     ]
 
     return list(get_database().reviews.aggregate(pipeline))
 
+
 def top_10_most_not_recommend_airport():
     pipeline = [
-        {"$match": {
-            "recommended": False,
-            "airport": {"$ne": None},
-            "airport_name": {"$ne": None}
-        }},
-        {"$group": {
-            "_id": "$airport",
-            "total_not_recommended": {"$sum": 1},
-            "airport_name": {"$first": "$airport_name"}
-        }},
+        {
+            "$match": {
+                "recommended": False,
+                "airport": {"$ne": None},
+                "airport_name": {"$ne": None},
+            }
+        },
+        {
+            "$group": {
+                "_id": "$airport",
+                "total_not_recommended": {"$sum": 1},
+                "airport_name": {"$first": "$airport_name"},
+            }
+        },
         {"$sort": {"total_not_recommended": -1}},
         {"$limit": 10},
-        {"$project": {
-            "_id": 0,
-            "airport_code": "$_id",
-            "airport_name": 1,
-            "total_not_recommended": 1
-        }}
+        {
+            "$project": {
+                "_id": 0,
+                "airport_code": "$_id",
+                "airport_name": 1,
+                "total_not_recommended": 1,
+            }
+        },
     ]
 
     return list(get_database().reviews.aggregate(pipeline))

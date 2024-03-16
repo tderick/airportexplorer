@@ -1,15 +1,15 @@
 version: "3.7"
 
 services:
-  airportexplorer:
+  airportexplorerdev:
     build: .
-    container_name: airportexplorer
+    container_name: airportexplorerdev
     restart: unless-stopped
     expose:
       - 9000
-  airportexplorer_nginx:
+  airportexplorerdev_nginx:
     build: ./nginx
-    container_name: airportexplorer_nginx
+    container_name: airportexplorerdev_nginx
     restart: unless-stopped
     ports:
       - "8080:80"

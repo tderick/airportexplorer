@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask import (Blueprint, jsonify, redirect, render_template, request,
+                   url_for)
 from flask_login import login_required
 
 from airportexplorer.database import get_database

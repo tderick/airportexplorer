@@ -1,6 +1,7 @@
 import requests
 from decouple import config
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask import (Blueprint, flash, jsonify, redirect, render_template,
+                   request, url_for)
 from flask_login import login_required
 
 from airportexplorer.database import get_database
@@ -10,6 +11,7 @@ AIRPORTDB_URL = "https://airportdb.io/api/v1/airport/{}?apiToken=" + config(
 )
 
 bp = Blueprint("airport", __name__, url_prefix="/manage")
+
 
 @bp.route("/airport/airport-form/")
 @login_required
@@ -269,6 +271,7 @@ def quick_airport_add():
                         )
 
     return redirect(url_for("airport.airport_list"))
+
 
 @bp.route("/airports/delete/", methods=["POST"])
 def airport_delete():

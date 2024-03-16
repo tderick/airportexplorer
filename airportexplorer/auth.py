@@ -2,15 +2,8 @@ from urllib.parse import quote_plus, urlencode
 
 from authlib.integrations.flask_client import OAuth
 from decouple import config
-from flask import (
-    Blueprint,
-    current_app,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import (Blueprint, current_app, redirect, render_template, request,
+                   session, url_for)
 from flask_login import current_user, login_required, login_user
 
 from airportexplorer.forms import UserOnboardingForm

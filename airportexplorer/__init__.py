@@ -1,23 +1,25 @@
 import redis
+from celery import Celery, Task
 from decouple import config
 from flask import Flask
 from flask_caching import Cache
 from flask_login import LoginManager
 from flask_session import Session
 from flask_wtf.csrf import CSRFProtect
-from celery import Celery, Task
 
 from .models import User
 
-cache = Cache(config={
-    "CACHE_TYPE": "redis", 
-    "CACHE_REDIS_URL": config("REDIS_URL"),
-    "CACHE_DEFAULT_TIMEOUT": 60,
-    "CACHE_KEY_PREFIX": "airportexplorer:",
-    
-})
+cache = Cache(
+    config={
+        "CACHE_TYPE": "redis",
+        "CACHE_REDIS_URL": config("REDIS_URL"),
+        "CACHE_DEFAULT_TIMEOUT": 60,
+        "CACHE_KEY_PREFIX": "airportexplorer:",
+    }
+)
 
 csrf = CSRFProtect()
+
 
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
@@ -60,11 +62,11 @@ def create_app():
     Session(app)
     cache.init_app(app)
     csrf.init_app(app)
-    
+
     # Configure Celery
     app.config.from_prefixed_env()
     celery_init_app(app)
-    
+
     # Login Manager
     login_manager = LoginManager()
     login_manager.init_app(app)

@@ -8,7 +8,7 @@ pre-commit run --all-files
 
 ## Command to run Celery Worker
 ```
-celery --app=run.celery_app worker -l DEBUG 
+celery --app=run.celery_app worker -l DEBUG
 ```
 
 ## Celery Beat

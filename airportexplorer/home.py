@@ -1,12 +1,14 @@
 import json
 
 from bson.objectid import ObjectId
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify
+from flask import (Blueprint, jsonify, redirect, render_template, request,
+                   url_for)
 
 from airportexplorer.database import get_database, get_redis
 from airportexplorer.tasks import compute_reviews_and_rating
 
 bp = Blueprint("home", __name__, url_prefix="/")
+
 
 @bp.route("/")
 def home():
@@ -63,10 +65,9 @@ def airport_result():
             }
         },
     ]
-    
 
     key = f"airportexplorer:airport_search:{query}:{pageNumber}:{pageSize}"
-    
+
     if get_redis().exists(key):
         result = json.loads(get_redis().get(key))
     else:
@@ -112,11 +113,12 @@ def airport_details():
     ]
 
     airport = list(get_database().countries.aggregate(pipeline))
-    
+
     if len(airport) == 0:
         return redirect(url_for("home.home"))
-    
+
     return render_template("home/airport-details.html", airport=airport[0])
+
 
 @bp.route("/airport-by-country/")
 def airport_by_country():
@@ -128,43 +130,66 @@ def airport_by_country():
     pageSize = int(request.args.get("pageSize")) if request.args.get("pageSize") else 10
 
     pipeline = [
-        {"$match": {"name": {"$regex": query, "$options": "i"}}},  # Match the specified country
+        {
+            "$match": {"name": {"$regex": query, "$options": "i"}}
+        },  # Match the specified country
         {"$unwind": "$regions"},  # Unwind the regions array
-        {"$group": {"_id": "$regions.name", "totalAirports": {"$sum": {"$size": "$regions.airports"}}, }},  # Group by region name and count the number of airports
-         {"$sort": {"totalAirports": -1}},  # Sort by totalAirports in descending order
-        {"$facet": {
-            "data": [
-                {"$skip": (pageNumber - 1) * pageSize},  # Skip to the specified page
-                {"$limit": pageSize}  # Limit the number of results per page
-            ],
-            "metadata": [
-                {"$count": "count"},  # Count the total number of regions
-                {"$project": {
-                    "_id": 0,
-                    "count": 1,
-                    "totalPages": {"$ceil": {"$divide": ["$count", pageSize]}}  # Calculate the total number of pages
-                }}
-            ]
-        }}
+        {
+            "$group": {
+                "_id": "$regions.name",
+                "totalAirports": {"$sum": {"$size": "$regions.airports"}},
+            }
+        },  # Group by region name and count the number of airports
+        {"$sort": {"totalAirports": -1}},  # Sort by totalAirports in descending order
+        {
+            "$facet": {
+                "data": [
+                    {
+                        "$skip": (pageNumber - 1) * pageSize
+                    },  # Skip to the specified page
+                    {"$limit": pageSize},  # Limit the number of results per page
+                ],
+                "metadata": [
+                    {"$count": "count"},  # Count the total number of regions
+                    {
+                        "$project": {
+                            "_id": 0,
+                            "count": 1,
+                            "totalPages": {
+                                "$ceil": {"$divide": ["$count", pageSize]}
+                            },  # Calculate the total number of pages
+                        }
+                    },
+                ],
+            }
+        },
     ]
 
     key = f"airportexplorer:airport_by_country:{query}:{pageNumber}:{pageSize}"
-    
+
     if get_redis().exists(key):
         result = json.loads(get_redis().get(key))
     else:
         result = list(get_database().countries.aggregate(pipeline))
         get_redis().set(key, json.dumps(result), ex=600)
-        
+
     next_url = url_for(
         "home.airport_by_country", pageNumber=pageNumber + 1, pageSize=pageSize, q=query
     )
     prev_url = url_for(
         "home.airport_by_country", pageNumber=pageNumber - 1, pageSize=pageSize, q=query
     )
-    
-    return render_template("home/airport-by-country.html", query=query, airports=result, pageNumber=pageNumber, pageSize=pageSize, next_url=next_url, prev_url=prev_url)
-    
+
+    return render_template(
+        "home/airport-by-country.html",
+        query=query,
+        airports=result,
+        pageNumber=pageNumber,
+        pageSize=pageSize,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
+
 
 @bp.route("/reviews-list/")
 def reviews_list():
@@ -202,27 +227,27 @@ def reviews_list():
     prev_url = url_for(
         "home.reviews_list", pageNumber=pageNumber - 1, pageSize=pageSize, airport=query
     )
-    
 
-    return render_template("home/reviews-list.html",
+    return render_template(
+        "home/reviews-list.html",
         reviews=result,
         pageNumber=pageNumber,
         pageSize=pageSize,
         next_url=next_url,
         prev_url=prev_url,
-        query=query
-        )
+        query=query,
+    )
 
 
-@bp.route("/like-review/")    
+@bp.route("/like-review/")
 def like_review():
     review_id = request.args.get("id")
     query = request.args.get("airport")
-    
-    result = get_database().reviews.update_one({"_id": ObjectId(review_id)}, {"$inc": {"likes": 1}})
-    
+
+    result = get_database().reviews.update_one(
+        {"_id": ObjectId(review_id)}, {"$inc": {"likes": 1}}
+    )
+
     if result.acknowledged:
         compute_reviews_and_rating.delay(query)
     return redirect(url_for("home.reviews_list", airport=query))
-    
-    
