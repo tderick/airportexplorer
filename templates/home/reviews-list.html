@@ -41,7 +41,9 @@
                   <th>AUTHOR</th>
                   <th>CONTENT</th>
                   <th>LIKES</th>
+                  {% if current_user.is_authenticated %}
                   <th>ACTION</th>
+                  {% endif %}
                 </tr>
               </thead>
               <tbody>
@@ -50,6 +52,7 @@
                   <td>{{ review.author }}</td>
                   <td>{{ review.content }}</td>
                   <td>{{ review.likes }}</td>
+                  {% if current_user.is_authenticated %}
                   <td>
                     <a
                       href="{{ url_for('home.like_review', id=review._id, airport=query) }}"
@@ -57,6 +60,7 @@
                       >Like</a
                     >
                   </td>
+                  {% endif %}
                 </tr>
 
                 {% endfor %}

@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 from flask import Blueprint, render_template, request, url_for, redirect
 
 from airportexplorer.database import get_database
@@ -8,7 +9,6 @@ bp = Blueprint("home", __name__, url_prefix="/")
 
 @bp.route("/")
 def home():
-    # compute_reviews_and_rating.delay()
     
     return render_template("home/home.html")
 
@@ -204,4 +204,13 @@ def reviews_list():
 
 @bp.route("/like-review/")    
 def like_review():
-    pass
+    review_id = request.args.get("id")
+    query = request.args.get("airport")
+    
+    result = get_database().reviews.update_one({"_id": ObjectId(review_id)}, {"$inc": {"likes": 1}})
+    
+    if result.acknowledged:
+        compute_reviews_and_rating.delay(query)
+    return redirect(url_for("home.reviews_list", airport=query))
+    
+    
